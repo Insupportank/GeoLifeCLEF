@@ -1,5 +1,5 @@
 data:
-  trainpath: '/opt/Datasets/'
+  trainpath: '/mounts/Datasets4/GeoLifeCLEF2022/'
   # testpath: '/dummy/path/to/test'
   batch_size: 256
   num_workers: 4

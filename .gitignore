@@ -5,3 +5,4 @@ build
 configs
 job.sbatch
 logslurms
+train

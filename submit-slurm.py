@@ -83,7 +83,7 @@ print(f"I will be using the commit id {commit_id}")
 os.system("mkdir -p logslurms")
 
 if len(sys.argv) not in [2, 3]:
-    print(f"Usage : {sys.argv[0]} config.yaml <nruns|1>")
+    print(f"Usage : {sys.argv[0]} config-sample.yaml <nruns|1>")
     sys.exit(-1)
 
 configpath = sys.argv[1]
@@ -94,7 +94,7 @@ else:
 
 # Copy the config in a temporary config file
 os.system("mkdir -p configs")
-tmp_configfilepath = tempfile.mkstemp(dir="./configs", suffix="-config.yml")[1]
+tmp_configfilepath = tempfile.mkstemp(dir="./configs", suffix="-config-sample.yml")[1]
 os.system(f"cp {configpath} {tmp_configfilepath}")
 
 # Launch the batch jobs

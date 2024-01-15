@@ -2,12 +2,14 @@ import torch
 import torch.nn as nn
 import torch.utils.data
 
+import os
+import yaml
+import sys
+
 import pandas as pd
 
 from PIL import Image
 from torchvision.transforms import ToTensor
-
-from PIL import Image
 
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
@@ -91,3 +93,17 @@ class GeoLifeDataset(torch.utils.data.Dataset):
     def tensor_size(self):
         # Also optionnal but could be usfull
         return None
+
+
+def test_dataset(config):
+    train_set = GeoLifeDataset(config['data']['trainpath'], file_type="train", country="all", data_portion=.01)
+    print(f"Dataset has {len(train_set)} samples")
+    print(f"Dataset has {len(train_set.classes)} classes")
+    print(f"Dataset has {train_set.tensor_size} as tensor size")
+    print("first index tensor and label is : ")
+    print(train_set[0])
+    print("dataset well made")
+
+if __name__ == "__main__":
+    config = yaml.safe_load(open("config.yml", "r"))
+    test_dataset(config)

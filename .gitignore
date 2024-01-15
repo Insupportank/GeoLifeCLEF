@@ -2,3 +2,6 @@ env
 venv
 torchtmpl.egg-info
 build
+configs
+job.sbatch
+logslurms

@@ -61,7 +61,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         self.data_length = len(self.data_set)
 
         self.list_of_features = df_obs.columns
-        self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'], inplace=True)
+        self.list_of_features = self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'])
         self.categories = self.classes()
 
 

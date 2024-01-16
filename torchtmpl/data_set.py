@@ -79,9 +79,11 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         image = Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB")
 
         if self.transform:
-            image = self.transform(image=image)['image']
+            transformed = self.transform['image']
+            image = transformed['image']
         else :
-            image = self.default_transform(image=image)['image']
+            transformed = self.default_transform['image']
+            image = transformed['image']
 
         #get features from df
         features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)

@@ -13,7 +13,7 @@ from torchvision import transforms
 
 import matplotlib.pyplot as plt
 
-import data_set
+from . import data_set
 
 def show_image(X):
     num_c = X.shape[0]

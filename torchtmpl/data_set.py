@@ -87,6 +87,10 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             image = transformed['image']
 
         #get features from df
+        test_1 = self.data_set.iloc[idx]
+        print(test_1)
+        test_2 = test_1[self.list_of_features]
+        print(test_2)
         features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
 
         # combine image(s) and df data

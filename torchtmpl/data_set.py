@@ -50,11 +50,12 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv", sep =";")
         df_obs = df_obs.merge(df_rasters, left_on="observation_id", right_on="observation_id", suffixes=('', ''))
         
+        print
         #Create column for the path of each images
-        df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == 1 else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
-        df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == 1 else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
-        df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == 1 else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
-        df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == 1 else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
+        df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
+        df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
+        df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
+        df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
 
         self.data_set = df_obs
         self.data_length = len(self.data_set)

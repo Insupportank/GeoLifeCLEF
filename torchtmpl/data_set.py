@@ -88,7 +88,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         print(features.shape)
 
         # combine image(s) and df data
-        combined_data = torch.cat((image, features), dim=0)
+        combined_data = torch.cat((image, features), dim=1)
 
         return combined_data, label
     

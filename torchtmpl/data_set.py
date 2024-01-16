@@ -41,6 +41,9 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             df_obs_us = pd.read_csv(f"{file_path}/observations/observations_us_{file_type}.csv", sep=";")
             df_obs = pd.concat((df_obs_fr, df_obs_us))
         
+        else:
+            df_obs = df_obs_fr
+        
         df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
         self.data_length = len(self.data_set)
 

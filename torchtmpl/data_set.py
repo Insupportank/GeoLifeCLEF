@@ -83,13 +83,14 @@ class GeoLifeDataset(torch.utils.data.Dataset):
 
         #get features from df
         features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
-        features = features.unsqueeze(0).repeat(image.size(0), 1)
+        features = features.unsqueeze(1)
         features = features.unsqueeze(2)
+        features = features.repeat(1,256,256)
         print(image.shape)
         print(features.shape)
 
         # combine image(s) and df data
-        combined_data = torch.cat((image, features), dim=1)
+        combined_data = torch.cat((image, features), dim=0)
 
         return combined_data, label
     

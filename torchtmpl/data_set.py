@@ -61,9 +61,9 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         self.data_length = len(self.data_set)
 
         self.list_of_features = df_obs.columns
-        self.list_of_features.remove('species_id', 'observation_id', 'subset')
+        self.list_of_features.drop('species_id', 'observation_id', 'subset')
         try:
-            self.list_of_features.remove('subset')
+            self.list_of_features.drop('subset')
         except ValueError:
             pass
 

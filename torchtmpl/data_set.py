@@ -47,7 +47,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
 
         #Add to the df the bioclimatic and pedologic data
-        df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv")
+        df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv", sep =";")
         df_obs = df_obs.merge(df_rasters, left_on="observation_id", right_on="observation_id", suffixes=('', ''))
         
         #Create column for the path of each images

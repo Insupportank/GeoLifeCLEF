@@ -1,9 +1,5 @@
 data:
-<<<<<<< HEAD:config-sample.yaml
-  trainpath: 'torchtmpl/train'
-=======
   trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
->>>>>>> bee06317185e5077dc5a16cf34286dd7c9dbead6:config.yaml
   # testpath: '/dummy/path/to/test'
   batch_size: 256
   num_workers: 4

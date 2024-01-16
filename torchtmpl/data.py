@@ -13,6 +13,7 @@ from torchvision import transforms
 
 import matplotlib.pyplot as plt
 
+import data_set
 
 def show_image(X):
     num_c = X.shape[0]
@@ -31,7 +32,7 @@ def get_dataloaders(data_config, use_cuda):
     input_transform = transforms.Compose(
         [transforms.Grayscale(), transforms.Resize((128, 128)), transforms.ToTensor()]
     )
-
+    dataset = data_set.GeoLifeDataset(data_config["trainpath"])
     base_dataset = torchvision.datasets.Caltech101(
         root=data_config["trainpath"],
         download=True,

@@ -1,12 +1,8 @@
 env
 venv
 torchtmpl.egg-info
-<<<<<<< HEAD
 build
 configs
 job.sbatch
 logslurms
 train
-=======
-build
->>>>>>> bee06317185e5077dc5a16cf34286dd7c9dbead6

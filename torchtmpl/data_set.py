@@ -50,8 +50,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         #Add to the df the bioclimatic and pedologic data
         df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv", sep =";")
         df_obs = df_obs.merge(df_rasters, left_on="observation_id", right_on="observation_id", suffixes=('', ''))
-        
-        print
+
         #Create column for the path of each images
         df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
         df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
@@ -62,12 +61,8 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         self.data_length = len(self.data_set)
 
         self.list_of_features = df_obs.columns
-        self.list_of_features.drop(['species_id', 'observation_id', 'subset'])
+        self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'], inplace=True)
         self.categories = self.classes()
-        try:
-            self.list_of_features.drop(['subset'])
-        except ValueError:
-            pass
 
 
     def __len__(self):

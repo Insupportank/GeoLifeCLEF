@@ -45,7 +45,6 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             df_obs = df_obs_fr
         
         df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
-        self.data_length = len(self.data_set)
 
         #Add to the df the bioclimatic and pedologic data
         df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv")
@@ -58,6 +57,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == 1 else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
 
         self.data_set = df_obs
+        self.data_length = len(self.data_set)
 
         self.list_of_features = df_obs.columns
         self.list_of_features.remove('species_id', 'observation_id', 'subset')

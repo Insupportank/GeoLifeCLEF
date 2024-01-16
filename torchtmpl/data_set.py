@@ -62,6 +62,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
 
         self.list_of_features = df_obs.columns
         self.list_of_features.drop(['species_id', 'observation_id', 'subset'])
+        self.categories = len(train_set.classes)
         try:
             self.list_of_features.drop(['subset'])
         except ValueError:

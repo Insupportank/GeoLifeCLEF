@@ -6,3 +6,4 @@ configs
 job.sbatch
 logslurms
 train
+logs

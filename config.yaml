@@ -14,9 +14,9 @@ nepochs: 20
 loss: "CrossEntropyLoss"
 
 logging:
-  # wandb: 
-  #   project: sample_project
-  #   entity: sample_entity
+  wandb: 
+    project: sample_project
+    entity: sample_entity
   logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
 # model:
 #   class: Linear

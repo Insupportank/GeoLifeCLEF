@@ -22,8 +22,8 @@ from . import utils
 def train(config):
 
     use_cuda = torch.cuda.is_available()
-    #device = torch.device("cuda") if use_cuda else torch.device("cpu")
-    device = torch.device("cpu")
+    device = torch.device("cuda") if use_cuda else torch.device("cpu")
+    #device = torch.device("cpu")
 
     if "wandb" in config["logging"]:
         wandb_config = config["logging"]["wandb"]

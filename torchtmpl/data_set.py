@@ -38,7 +38,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         
         
         if country == "all":
-            df_obs_us = pd.read_csv(f"{file_path}/observations/observations_fr_{file_type}.csv", sep=";")
+            df_obs_fr = pd.read_csv(f"{file_path}/observations/observations_fr_{file_type}.csv", sep=";")
             df_obs_us = pd.read_csv(f"{file_path}/observations/observations_us_{file_type}.csv", sep=";")
             df_obs = pd.concat((df_obs_fr, df_obs_us))
         

@@ -80,6 +80,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             transformed = self.default_transform(image = np.asarray(image))
 
         image = transformed['image'] #3,256,256 if RGB like it is now
+        image = image.to(torch.float32)
         # #get features from df
         # features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
         # features = features.unsqueeze(1)

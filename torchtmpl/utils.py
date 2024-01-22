@@ -85,7 +85,6 @@ def train(model, loader, f_loss, optimizer, device, dynamic_display=True):
     for i, (inputs, targets) in (pbar := tqdm.tqdm(enumerate(loader))):
 
         inputs, targets = inputs.to(device), targets.to(device)
-        print(inputs)
         # Compute the forward propagation
         outputs = model(inputs)
 

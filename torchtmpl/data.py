@@ -33,12 +33,12 @@ def get_dataloaders(data_config, use_cuda):
         [transforms.Grayscale(), transforms.Resize((128, 128)), transforms.ToTensor()]
     )
     
-    # base_dataset = torchvision.datasets.Caltech101(
-    #     root=data_config["trainpath"],
-    #     download=True,
-    #     transform=input_transform,
-    # )
-    base_dataset = data_set.GeoLifeDataset(data_config["trainpath"])
+    base_dataset = torchvision.datasets.Caltech101(
+        root=data_config["trainpath"],
+        download=True,
+        transform=input_transform,
+    )
+    #base_dataset = data_set.GeoLifeDataset(data_config["trainpath"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
     indices = list(range(len(base_dataset)))

@@ -1,5 +1,6 @@
 data:
-  trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
+  #trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
+  trainpath: '/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/directory'
   # testpath: '/dummy/path/to/test'
   batch_size: 32
   num_workers: 4

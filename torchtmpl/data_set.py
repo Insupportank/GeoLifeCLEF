@@ -72,7 +72,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         label = self.data_set.iloc[idx]["species_id"]
         
         #Pillow works for png and tif
-        image = Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB")
+        image = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
 
         if self.transform:
             transformed = self.transform(image=np.asarray(image))

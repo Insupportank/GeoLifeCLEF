@@ -80,16 +80,16 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             transformed = self.default_transform(image = np.asarray(image))
 
         image = transformed['image'] #3,256,256 if RGB like it is now
-        #get features from df
-        features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
-        features = features.unsqueeze(1)
-        features = features.unsqueeze(2)
-        features = features.repeat(1,256,256) #29,256,256
+        # #get features from df
+        # features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
+        # features = features.unsqueeze(1)
+        # features = features.unsqueeze(2)
+        # features = features.repeat(1,256,256) #29,256,256
 
-        # combine image(s) and df data
-        combined_data = torch.cat((image, features), dim=0) #32,256,256
+        # # combine image(s) and df data
+        # combined_data = torch.cat((image, features), dim=0) #32,256,256
 
-        return combined_data, label
+        return image, label
     
     def classes(self):
         # Optional function but usfull to get the list of classes

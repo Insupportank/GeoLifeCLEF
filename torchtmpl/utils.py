@@ -89,6 +89,8 @@ def train(model, loader, f_loss, optimizer, device, dynamic_display=True):
         outputs = model(inputs)
 
         loss = f_loss(outputs, targets)
+        print(f_loss)
+        print(loss)
 
         # Backward and optimize
         optimizer.zero_grad()

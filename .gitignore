@@ -7,4 +7,4 @@ job.sbatch
 logslurms
 train
 logs
-directory
+torchtmpl/directory

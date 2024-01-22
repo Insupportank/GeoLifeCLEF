@@ -51,6 +51,7 @@ def train(config):
     # Build the loss
     logging.info("= Loss")
     loss = optim.get_loss(config["loss"])
+    print(loss)
 
     # Build the optimizer
     logging.info("= Optimizer")

@@ -45,6 +45,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         else:
             df_obs = df_obs_fr
         
+        self.categories = df_obs.species_id.unique().tolist()
         df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
 
         #Add to the df the bioclimatic and pedologic data
@@ -62,17 +63,13 @@ class GeoLifeDataset(torch.utils.data.Dataset):
 
         self.list_of_features = df_obs.columns
         self.list_of_features = self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'])
-        self.categories = self.classes()
-        print(len(self.categories))
 
 
     def __len__(self):
         return self.data_length
 
     def __getitem__(self, idx):
-        label = int(self.data_set.iloc[idx]["species_id"])
-        print(label)
-        print(type(label))
+        label = self.data_set.iloc[idx]["species_id"]
         #Pillow works for png and tif
         image = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
 
@@ -94,9 +91,6 @@ class GeoLifeDataset(torch.utils.data.Dataset):
 
         return image, label
     
-    def classes(self):
-        # Optional function but usfull to get the list of classes
-        return self.data_set.species_id.unique().tolist()
     
     def tensor_size(self):
         # Also optionnal but could be usfull

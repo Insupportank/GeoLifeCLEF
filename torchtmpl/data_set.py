@@ -70,7 +70,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         return self.data_length
 
     def __getitem__(self, idx):
-        label = self.data_set.iloc[idx]["species_id"]
+        label = int(self.data_set.iloc[idx]["species_id"])
         print(label)
         print(type(label))
         #Pillow works for png and tif

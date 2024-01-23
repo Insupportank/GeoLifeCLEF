@@ -8,7 +8,7 @@ data:
 optim:
   algo: SGD
   params:
-    lr: 0.01
+    lr: 0.001
 
 nepochs: 20
 loss: "CrossEntropyLoss"
@@ -17,7 +17,6 @@ logging:
   wandb: 
     project: deep_learning_geolifeClef
     entity: insupportank
-    api_key : 552a6e51531fdee36518bb5febf38eaa02fd4cac 
   logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
 # model:
 #   class: Linear

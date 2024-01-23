@@ -1,7 +1,7 @@
 data:
   trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   # testpath: '/dummy/path/to/test'
-  batch_size: 256
+  batch_size: 32
   num_workers: 4
   valid_ratio: 0.2
 
@@ -14,9 +14,9 @@ nepochs: 20
 loss: "CrossEntropyLoss"
 
 logging:
-  #wandb: 
-  #  project: sample_project
-  #  entity: sample_entity
+  wandb: 
+    project: deep_learning_geolifeClef
+    entity: insupportank
   logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
 # model:
 #   class: Linear

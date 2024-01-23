@@ -67,7 +67,7 @@ def get_dataloaders(data_config, use_cuda):
         pin_memory=use_cuda,
     )
 
-    num_classes = len(base_dataset.categories)
+    num_classes = max(base_dataset.categories) + 1
     input_size = tuple(base_dataset[0][0].shape)
 
     return train_loader, valid_loader, input_size, num_classes

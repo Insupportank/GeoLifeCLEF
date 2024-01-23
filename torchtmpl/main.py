@@ -26,7 +26,6 @@ def train(config):
 
     if "wandb" in config["logging"]:
         wandb_config = config["logging"]["wandb"]
-        wandb.login(key=wandb_config["api_key"])
         wandb.init(project=wandb_config["project"], entity=wandb_config["entity"])
         wandb_log = wandb.log
         wandb_log(config)

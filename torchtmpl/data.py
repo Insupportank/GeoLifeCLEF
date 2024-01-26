@@ -68,6 +68,8 @@ def get_dataloaders(data_config, use_cuda):
     )
 
     num_classes = max(base_dataset.categories) + 1
-    input_size = tuple(base_dataset[0][0].shape)
+    # print(base_dataset[0][0]["image"].shape) #torch.Size([3, 256, 256])
+    # print(base_dataset[0][0]["features"].shape) #torch.Size([29])
+    input_sizes = (tuple(base_dataset[0][0]["image"].shape), tuple(base_dataset[0][0]["features"].shape)[0])
 
-    return train_loader, valid_loader, input_size, num_classes
+    return train_loader, valid_loader, input_sizes, num_classes

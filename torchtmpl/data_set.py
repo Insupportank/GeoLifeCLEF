@@ -81,7 +81,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         # #get features from df
         features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
 
-        return (image, features), label
+        return {"image": image, "features": features}, label
 
 
 def test_dataset(config):

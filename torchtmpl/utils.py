@@ -84,9 +84,9 @@ def train(model, loader, f_loss, optimizer, device, dynamic_display=True):
     num_samples = 0
     for i, (inputs, targets) in (pbar := tqdm.tqdm(enumerate(loader))):
 
-        inputs, targets = inputs.to(device), targets.to(device)
+        image_inputs, features_inputs, targets = inputs["image"].to(device), inputs["features"].to(device), targets.to(device)
         # Compute the forward propagation
-        outputs = model(inputs)
+        outputs = model((image_inputs, features_inputs))
 
         loss = f_loss(outputs, targets)
 
@@ -97,8 +97,8 @@ def train(model, loader, f_loss, optimizer, device, dynamic_display=True):
 
         # Update the metrics
         # We here consider the loss is batch normalized
-        total_loss += inputs.shape[0] * loss.item()
-        num_samples += inputs.shape[0]
+        total_loss += outputs.shape[0] * loss.item()
+        num_samples += outputs.shape[0]
         pbar.set_description(f"Train loss : {total_loss/num_samples:.2f}")
 
     return total_loss / num_samples
@@ -124,16 +124,17 @@ def test(model, loader, f_loss, device):
     num_samples = 0
     for (inputs, targets) in loader:
 
-        inputs, targets = inputs.to(device), targets.to(device)
+        image_inputs, features_inputs, targets = inputs["image"].to(device), inputs["features"].to(device), targets.to(device)
 
         # Compute the forward propagation
-        outputs = model(inputs)
+        outputs = model((image_inputs, features_inputs))
 
         loss = f_loss(outputs, targets)
 
         # Update the metrics
         # We here consider the loss is batch normalized
-        total_loss += inputs.shape[0] * loss.item()
-        num_samples += inputs.shape[0]
+        total_loss += outputs.shape[0] * loss.item()
+        print(f"output shape: {outputs.shape[0]} \n loss : {loss.item()}")
+        num_samples += outputs.shape[0]
 
     return total_loss / num_samples

@@ -77,23 +77,18 @@ class GeoLifeDataset(torch.utils.data.Dataset):
 
         image = transformed['image'] #3,256,256 if RGB like it is now
         image = image.to(torch.float32)
+
         # #get features from df
-        # features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
-        # features = features.unsqueeze(1)
-        # features = features.unsqueeze(2)
-        # features = features.repeat(1,256,256) #29,256,256
+        features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
 
-        # # combine image(s) and df data
-        # combined_data = torch.cat((image, features), dim=0) #32,256,256
-
-        return image, label
+        return (image, features), label
 
 
 def test_dataset(config):
     train_set = GeoLifeDataset(config['data']['trainpath'], file_type="train", country="all", data_portion=.01)
     print(f"Dataset has {len(train_set)} samples")
     print(f"Dataset has {len(train_set.categories)} classes")
-    print(f"Dataset has {tuple(train_set[0][0].shape)} as tensor size")
+    print(f"Dataset has {tuple(train_set[0][0][0].shape)} as image tensor size; {tuple(train_set[0][0][1].shape)} as features tensor size.")
     print("first index tensor and label is : ")
     print(train_set[0])
     print("dataset well made")

@@ -59,6 +59,9 @@ class CNN(nn.Module):
         return self.seq(x)
 
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
+# eval() and train() do work recurcively !! :)
+# gradient also does include child models. (except with .requires_grad=False)
+
 class BiModel(nn.Module):
     def __init__(self, cfg, input_sizes, num_classes):
         super().__init__()

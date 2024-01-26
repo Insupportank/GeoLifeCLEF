@@ -9,9 +9,9 @@ data:
 optim:
   algo: SGD
   params:
-    lr: 0.01
+    lr: 0.001
 
-nepochs: 5
+nepochs: 10
 loss: "CrossEntropyLoss"
 
 logging:
@@ -23,4 +23,4 @@ logging:
 #   class: Linear
 model:
   class: BiModel
-  num_layers : 4
+  num_layers : 2

@@ -134,7 +134,6 @@ def test(model, loader, f_loss, device):
         # Update the metrics
         # We here consider the loss is batch normalized
         total_loss += outputs.shape[0] * loss.item()
-        print(f"output shape: {outputs.shape[0]} \n loss : {loss.item()}")
         num_samples += outputs.shape[0]
 
     return total_loss / num_samples

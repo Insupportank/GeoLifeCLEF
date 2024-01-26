@@ -68,15 +68,34 @@ class GeoLifeDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         label = self.data_set.iloc[idx]["species_id"]
         #Pillow works for png and tif
-        image = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
+        image_rgb = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
+        image_altitude = np.array(Image.open(self.data_set.iloc[idx]["altitude_image"]))
+        image_landcover = np.array(Image.open(self.data_set.iloc[idx]["altitude_image"]))         
+        image_near_ir = np.array(Image.open(self.data_set.iloc[idx]["altitude_image"]))
+
+
+        
 
         if self.transform:
-            transformed = self.transform(image=np.asarray(image))
+            transformed_rgb = self.transform(image=image_rgb)
+            transformed_altitude = self.transform(image=image_altitude)
+            transformed_landcover = self.transform(image=image_landcover)
+            transformed_near_ir = self.transform(image=image_near_ir)
         else :
-            transformed = self.default_transform(image = np.asarray(image))
+            transformed_rgb = self.default_transform(image = image_rgb)
+            transformed_altitude = self.default_transform(image=image_altitude)
+            transformed_landcover = self.default_transform(image=image_landcover)
+            transformed_near_ir = self.default_transform(image=image_near_ir)
 
-        image = transformed['image'] #3,256,256 if RGB like it is now
-        image = image.to(torch.float32)
+        image_rgb = transformed_rgb['image'] #3,256,256 if RGB like it is now
+        image_altitude = transformed_altitude['image']
+        image_landcover = transformed_landcover['image']
+        image_near_ir = transformed_near_ir['image']
+        image_rgb = image_rgb.to(torch.float32)
+        image_altitude = image_altitude.to(torch.float32)
+        image_landcover = image_landcover.to(torch.float32)
+        image_near_ir = image_near_ir.to(torch.float32)
+        image = torch.cat((image_rgb,image_near_ir,image_landcover, image_altitude))
         # #get features from df
         # features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
         # features = features.unsqueeze(1)

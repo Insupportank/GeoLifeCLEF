@@ -33,17 +33,14 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         self.file_path = file_path
         self.transform = transform
         self.default_transform = A.Compose([A.Resize(256,256), ToTensorV2()])
-
-        df_obs_fr = pd.read_csv(f"{file_path}/observations/observations_{country}_{file_type}.csv", sep=";")
-        
-        
+      
         if country == "all":
             df_obs_fr = pd.read_csv(f"{file_path}/observations/observations_fr_{file_type}.csv", sep=";")
             df_obs_us = pd.read_csv(f"{file_path}/observations/observations_us_{file_type}.csv", sep=";")
             df_obs = pd.concat((df_obs_fr, df_obs_us))
         
         else:
-            df_obs = df_obs_fr
+            df_obs = pd.read_csv(f"{file_path}/observations/observations_{country}_{file_type}.csv", sep=";")
         
         self.categories = df_obs.species_id.unique().tolist()
         df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
@@ -90,22 +87,17 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         # combined_data = torch.cat((image, features), dim=0) #32,256,256
 
         return image, label
-    
-    
-    def tensor_size(self):
-        # Also optionnal but could be usfull
-        return None
 
 
 def test_dataset(config):
     train_set = GeoLifeDataset(config['data']['trainpath'], file_type="train", country="all", data_portion=.01)
     print(f"Dataset has {len(train_set)} samples")
-    print(f"Dataset has {len(train_set.classes)} classes")
-    print(f"Dataset has {train_set.tensor_size} as tensor size")
+    print(f"Dataset has {len(train_set.categories)} classes")
+    print(f"Dataset has {tuple(train_set[0][0].shape)} as tensor size")
     print("first index tensor and label is : ")
     print(train_set[0])
     print("dataset well made")
 
 if __name__ == "__main__":
-    config = yaml.safe_load(open("config.yml", "r"))
+    config = yaml.safe_load(open("config.yaml", "r"))
     test_dataset(config)

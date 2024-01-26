@@ -97,15 +97,15 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         image_near_ir = image_near_ir.to(torch.float32)
         image = torch.cat((image_rgb,image_near_ir,image_landcover, image_altitude))
         # #get features from df
-        # features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
-        # features = features.unsqueeze(1)
-        # features = features.unsqueeze(2)
-        # features = features.repeat(1,256,256) #29,256,256
+        features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
+        features = features.unsqueeze(1)
+        features = features.unsqueeze(2)
+        features = features.repeat(1,256,256) #29,256,256
 
         # # combine image(s) and df data
-        # combined_data = torch.cat((image, features), dim=0) #32,256,256
+        combined_data = torch.cat((image, features), dim=0) #32,256,256
 
-        return image, label
+        return combined_data, label
 
 
 def test_dataset(config):

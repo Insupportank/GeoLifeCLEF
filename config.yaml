@@ -1,8 +1,9 @@
 data:
-  # trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
-  trainpath: '../../../Téléchargements/geolife_dataset'
+  trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
+  data_portion: 1
+  #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
-  batch_size: 32
+  batch_size: 16
   num_workers: 4
   valid_ratio: 0.2
 
@@ -18,9 +19,9 @@ logging:
   wandb: 
    project: Geolife_deeplearning
    entity: sample_entity
-  logdir: "logdir"  # Better to provide the fullpath, especially on the cluster
+  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
 # model:
 #   class: Linear
 model:
   class: BiModel
-  num_layers : 2
+  num_layers : 4

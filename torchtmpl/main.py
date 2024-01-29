@@ -26,8 +26,9 @@ def train(config):
     #device = torch.device("cpu")
 
     if "wandb" in config["logging"]:
+        wandb.login(key=["4da5ee7fd078d86b49fca0e87699da81983a7536"] # pour weight bias aaron team geolifeclef_aaron_julien_olivier
         wandb_config = config["logging"]["wandb"]
-        wandb.init(project=wandb_config["project"])#, entity=wandb_config["entity"])
+        wandb.init(project=wandb_config["project"]), entity=wandb_config["entity"])
         wandb_log = wandb.log
         wandb_log(config)
         logging.info("Will be recording in wandb run name : {wandb.run.name}")

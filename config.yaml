@@ -17,8 +17,8 @@ loss: "CrossEntropyLoss"
 
 logging:
   wandb: 
-   project: Geolife_deeplearning
-   entity: sample_entity
+   project: deepl_geolifeclef
+   entity: deelp_geolifeclef_aaron_julien_olivier
   logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
 # model:
 #   class: Linear

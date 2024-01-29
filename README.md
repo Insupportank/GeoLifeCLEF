@@ -45,6 +45,7 @@ Then running the simulation can be as simple as :
 
 ```
 python3 submit.py
+python3 submit-slurm.py config.yaml 1
 ```
 
 ## Testing the functions

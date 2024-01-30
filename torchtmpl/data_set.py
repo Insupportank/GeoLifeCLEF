@@ -29,10 +29,17 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         - 19 bioclimatic features (in the pre-extracted/environmental_vectors.csv)
         - 8 Pedologic data features (in the pre-extracted/environmental_vectors.csv)
     """
-    def __init__(self, file_path, file_type="train", country="fr", transform=None, data_portion=.05):
+    def __init__(self, file_path, file_type="train", country="fr", transform=None, data_portion=.2):
         self.file_path = file_path
         self.transform = transform
-        self.default_transform = A.Compose([A.Resize(256,256), ToTensorV2()])
+        self.default_transform = A.Compose([
+            A.Resize(256,256),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+                ),
+            ToTensorV2()
+            ])
       
         if country == "all":
             df_obs_fr = pd.read_csv(f"{file_path}/observations/observations_fr_{file_type}.csv", sep=";")
@@ -56,14 +63,22 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
 
         self.data_set = df_obs
-        self.data_length = len(self.data_set)
 
         self.list_of_features = df_obs.columns
         self.list_of_features = self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'])
 
+        
+        features = self.data_set[self.list_of_features]
+        # I don't know why, but bio_19 has some values that are not float Or NaN...
+        features.bio_19 = pd.to_numeric(features['bio_19'], errors='coerce')
+        
+        ### /!\ Carefull to not fill na with mean if we split data for test/train (its fine for the validation sso we still do it)
+        features = features.fillna(features.mean())
+        epsilon = 1e-7
+        self.normalized_features = (epsilon + features-features.min())/(features.max()-features.min())
 
     def __len__(self):
-        return self.data_length
+        return len(self.data_set)
 
     def __getitem__(self, idx):
         label = self.data_set.iloc[idx]["species_id"]
@@ -82,37 +97,22 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             transformed_landcover = self.transform(image=image_landcover)
             transformed_near_ir = self.transform(image=image_near_ir)
         else :
-            transformed_rgb = self.default_transform(image = image_rgb)
-            transformed_altitude = self.default_transform(image=image_altitude)
-            transformed_landcover = self.default_transform(image=image_landcover)
-            transformed_near_ir = self.default_transform(image=image_near_ir)
+            transformed = self.default_transform(image = np.asarray(image))
 
-        image_rgb = transformed_rgb['image'] #3,256,256 if RGB like it is now
-        image_altitude = transformed_altitude['image']
-        image_landcover = transformed_landcover['image']
-        image_near_ir = transformed_near_ir['image']
-        image_rgb = image_rgb.to(torch.float32)
-        image_altitude = image_altitude.to(torch.float32)
-        image_landcover = image_landcover.to(torch.float32)
-        image_near_ir = image_near_ir.to(torch.float32)
-        image = torch.cat((image_rgb,image_near_ir,image_landcover, image_altitude))
+        image = transformed['image'] #3,256,256 if RGB like it is now
+        image = image.to(torch.float32)
+
         # #get features from df
-        # features = torch.tensor(self.data_set.iloc[idx][self.list_of_features], dtype=torch.float32)
-        # features = features.unsqueeze(1)
-        # features = features.unsqueeze(2)
-        # features = features.repeat(1,256,256) #29,256,256
+        features = torch.tensor(self.normalized_features.iloc[idx][self.list_of_features], dtype=torch.float32)
 
-        # # combine image(s) and df data
-        #combined_data = torch.cat((image, features), dim=0) #32,256,256
-
-        return image, label
+        return {"image": image, "features": features}, label
 
 
 def test_dataset(config):
     train_set = GeoLifeDataset(config['data']['trainpath'], file_type="train", country="all", data_portion=.01)
     print(f"Dataset has {len(train_set)} samples")
     print(f"Dataset has {len(train_set.categories)} classes")
-    print(f"Dataset has {tuple(train_set[0][0].shape)} as tensor size")
+    print(f"Dataset has {tuple(train_set[0][0]['image'].shape)} as image tensor size; {tuple(train_set[0][0]['features'].shape)} as features tensor size.")
     print("first index tensor and label is : ")
     print(train_set[0])
     print("dataset well made")

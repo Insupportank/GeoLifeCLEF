@@ -26,7 +26,7 @@ python -m pip install .
 Then you can run a training, by editing the yaml file, then 
 
 ```
-python -m torchtmpl.main config.yml train
+python -m torchtmpl.main config.yaml train
 ```
 
 And for testing (**not yet implemented**)
@@ -45,6 +45,7 @@ Then running the simulation can be as simple as :
 
 ```
 python3 submit.py
+python3 submit-slurm.py config.yaml 1
 ```
 
 ## Testing the functions

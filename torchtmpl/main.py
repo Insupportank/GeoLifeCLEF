@@ -26,6 +26,7 @@ def train(config):
 
     if "wandb" in config["logging"]:
         wandb_config = config["logging"]["wandb"]
+        wandb.login(key=wandb_config["key"]) # pour weight bias aaron team geolifeclef_aaron_julien_olivier
         wandb.init(project=wandb_config["project"], entity=wandb_config["entity"])
         wandb_log = wandb.log
         wandb_log(config)
@@ -37,14 +38,14 @@ def train(config):
     logging.info("= Building the dataloaders")
     data_config = config["data"]
 
-    train_loader, valid_loader, input_size, num_classes = data.get_dataloaders(
+    train_loader, valid_loader, input_sizes, num_classes = data.get_dataloaders(
         data_config, use_cuda
     )
 
     # Build the model
     logging.info("= Model")
     model_config = config["model"]
-    model = models.build_model(model_config, input_size, num_classes)
+    model = models.build_model(model_config, input_sizes, num_classes)
     model.to(device)
 
     # Build the loss
@@ -63,6 +64,7 @@ def train(config):
     logname = model_config["class"]
     logdir = utils.generate_unique_logpath(logging_config["logdir"], logname)
     if not os.path.isdir(logdir):
+        print(logdir)
         os.makedirs(logdir)
     logging.info(f"Will be logging into {logdir}")
 
@@ -72,7 +74,8 @@ def train(config):
         yaml.dump(config, file)
 
     # Make a summary script of the experiment
-    input_size = next(iter(train_loader))[0].shape
+    image_input_size = next(iter(train_loader))[0]["image"].shape
+    feature_input_size = next(iter(train_loader))[0]["features"].shape
     summary_text = (
         f"Logdir : {logdir}\n"
         + "## Command \n"
@@ -81,7 +84,10 @@ def train(config):
         + f" Config : {config} \n\n"
         + (f" Wandb run name : {wandb.run.name}\n\n" if wandb_log is not None else "")
         + "## Summary of the model architecture\n"
-        + f"{torchinfo.summary(model, input_size=input_size)}\n\n"
+        + "### Image model\n"
+        + f"{torchinfo.summary(model.image_model, input_size=image_input_size)}\n\n"
+        + "### Features model\n"
+        + f"{torchinfo.summary(model.features_model, input_size=feature_input_size)}\n\n"
         + "## Loss\n\n"
         + f"{loss}\n\n"
         + "## Datasets : \n"

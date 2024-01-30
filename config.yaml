@@ -1,25 +1,28 @@
 data:
   trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
+  data_portion: 1
+  #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
-  batch_size: 256
+  batch_size: 16
   num_workers: 4
   valid_ratio: 0.2
 
 optim:
   algo: SGD
   params:
-    lr: 0.01
+    lr: 0.001
 
-nepochs: 20
+nepochs: 10
 loss: "CrossEntropyLoss"
 
 logging:
-  #wandb: 
-  #  project: sample_project
-  #  entity: sample_entity
-  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
+  wandb: 
+   key: 4da5ee7fd078d86b49fca0e87699da81983a7536
+   project: deepl_geolifeclef
+   entity: deelp_geolifeclef_aaron_julien_olivier
+  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
 # model:
 #   class: Linear
 model:
-  class: VanillaCNN
+  class: BiModel
   num_layers : 4

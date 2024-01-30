@@ -12,7 +12,7 @@ def makejob(commit_id, configpath, nruns):
 #SBATCH --job-name=templatecode
 #SBATCH --nodes=1
 #SBATCH --partition=gpu_prod_long
-#SBATCH --time=2:00:00
+#SBATCH --time=7:00:00
 #SBATCH --output=logslurms/slurm-%A_%a.out
 #SBATCH --error=logslurms/slurm-%A_%a.err
 #SBATCH --array=1-{nruns}
@@ -94,7 +94,7 @@ else:
 
 # Copy the config in a temporary config file
 os.system("mkdir -p configs")
-tmp_configfilepath = tempfile.mkstemp(dir="./configs", suffix="-config-sample.yml")[1]
+tmp_configfilepath = tempfile.mkstemp(dir="./configs", suffix="-config.yaml")[1]
 os.system(f"cp {configpath} {tmp_configfilepath}")
 
 # Launch the batch jobs

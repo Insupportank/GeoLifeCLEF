@@ -131,7 +131,16 @@ def train(config):
             wandb_log(metrics)
 
 
-def test(config):
+def test(config, model_testing, output_file):
+    """
+    Load le model torch.load(model_testing)
+    Load le dataloader mais juste pour le testset -> recréer dataloader ou passer en arg que c'est le test.
+    model.eval()
+    model(donees)  = forward
+    
+    faire une fonction qui calcul le top 30 -> permet d'avoir une fct loss qu'on utilisera sur le validation set
+    sortir un fichier avec le top 30
+    """
     raise NotImplementedError
 
 

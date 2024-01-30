@@ -29,7 +29,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         - 19 bioclimatic features (in the pre-extracted/environmental_vectors.csv)
         - 8 Pedologic data features (in the pre-extracted/environmental_vectors.csv)
     """
-    def __init__(self, file_path, file_type="train", country="all", transform=None, data_portion=.05):
+    def __init__(self, file_path, file_type="train", country="fr", transform=None, data_portion=.05):
         self.file_path = file_path
         self.transform = transform
         self.default_transform = A.Compose([A.Resize(256,256), ToTensorV2()])
@@ -43,7 +43,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             df_obs = pd.read_csv(f"{file_path}/observations/observations_{country}_{file_type}.csv", sep=";")
         
         self.categories = df_obs.species_id.unique().tolist()
-        #df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
+        df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
 
         #Add to the df the bioclimatic and pedologic data
         df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv", sep =";")

@@ -29,15 +29,6 @@ def get_dataloaders(data_config, use_cuda):
 
     logging.info("  - Dataset creation")
 
-    # input_transform = transforms.Compose(
-    #     [transforms.Grayscale(), transforms.Resize((128, 128)), transforms.ToTensor()]
-    # )
-    
-    # base_dataset = torchvision.datasets.Caltech101(
-    #     root=data_config["trainpath"],
-    #     download=True,
-    #     transform=input_transform,
-    # )
     base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], data_portion=data_config["data_portion"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
@@ -73,3 +64,29 @@ def get_dataloaders(data_config, use_cuda):
     input_sizes = (tuple(base_dataset[0][0]["image"].shape), tuple(base_dataset[0][0]["features"].shape)[0])
 
     return train_loader, valid_loader, input_sizes, num_classes
+
+
+def get_test_dataloader(data_config, use_cuda):
+    batch_size = data_config["batch_size"]
+    num_workers = data_config["num_workers"]
+
+    logging.info("  - Dataset creation")
+
+    base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], file_type="test", country="all", transform=None, data_portion=1.)
+    logging.info(f"  - I loaded {len(base_dataset)} samples from test set")
+
+    # Build the dataloader
+    test_loader = torch.utils.data.DataLoader(
+        base_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=use_cuda,
+    )
+
+    num_classes = 17037 # Find way to have this number withough using base_dataset.categories that uses the number of different spicies_id.
+    # print(base_dataset[0][0]["image"].shape) #torch.Size([3, 256, 256])
+    # print(base_dataset[0][0]["features"].shape) #torch.Size([29])
+    input_sizes = (tuple(base_dataset[0][0]["image"].shape), tuple(base_dataset[0][0]["features"].shape)[0])
+
+    return test_loader, input_sizes, num_classes

@@ -131,7 +131,7 @@ def train(config):
             wandb_log(metrics)
 
 
-def test(config, model_testing, output_file):
+def test(config):
     """
     Load le model torch.load(model_testing)
     Load le dataloader mais juste pour le testset -> recréer dataloader ou passer en arg que c'est le test.
@@ -141,7 +141,34 @@ def test(config, model_testing, output_file):
     faire une fonction qui calcul le top 30 -> permet d'avoir une fct loss qu'on utilisera sur le validation set
     sortir un fichier avec le top 30
     """
-    raise NotImplementedError
+
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda") if use_cuda else torch.device("cpu")
+    
+    data_config = config["data"]
+    test_loader, input_sizes, num_classes = data.get_test_dataloader(data_config, use_cuda)
+
+    model_config = config["model"]
+    model = models.build_model(config["model"], input_sizes, num_classes)
+    model.load_state_dict(model_config["path_to_test_model"])
+    model.eval()
+
+    top_30 = {"Id": [], "Predicted": []}
+
+    for (inputs, observations) in test_loader:
+
+        image_inputs, features_inputs = inputs["image"].to(device), inputs["features"].to(device)
+
+        # Compute the forward propagation
+        output_batch = model((image_inputs, features_inputs))
+        species_id = get_top_30(output_batch)
+
+        top_30["Id"] += observations.numpy().tolist()
+        top_30["Predicted"] += species_id.numpy().tolist()
+    
+    top_30["Predicted"].apply(lambda x: " ".join(map(str, x)))
+    top_30.set_index('Id')
+    top_30.to_csv('sample_submission_testings.csv')
 
 
 if __name__ == "__main__":

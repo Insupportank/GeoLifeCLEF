@@ -29,9 +29,10 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         - 19 bioclimatic features (in the pre-extracted/environmental_vectors.csv)
         - 8 Pedologic data features (in the pre-extracted/environmental_vectors.csv)
     """
-    def __init__(self, file_path, file_type="train", country="fr", transform=None, data_portion=.2):
+    def __init__(self, file_path, file_type="train", country="all", transform=None, data_portion=.2):
         self.file_path = file_path
         self.transform = transform
+        self.file_type = file_type
         self.default_transform = A.Compose([
             A.Resize(256,256),
             A.Normalize(
@@ -49,7 +50,8 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         else:
             df_obs = pd.read_csv(f"{file_path}/observations/observations_{country}_{file_type}.csv", sep=";")
         
-        self.categories = df_obs.species_id.unique().tolist()
+        if file_type == "train":
+            self.categories = df_obs.species_id.unique().tolist()
         df_obs = df_obs.sample(frac=data_portion, replace=False, random_state=1) #carfull, the spiecies repartition is unbalanced, so we might want to take a better subsample
 
         #Add to the df the bioclimatic and pedologic data
@@ -57,23 +59,31 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         df_obs = df_obs.merge(df_rasters, left_on="observation_id", right_on="observation_id", suffixes=('', ''))
 
         #Create column for the path of each images
-        df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
-        df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
-        df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
-        df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
+        if self.file_type == "train":
+            df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
+            df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
+            df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
+            df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
+        elif self.file_type == "test":
+            df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
+            df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
+            df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
+            df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
 
         self.data_set = df_obs
 
         self.list_of_features = df_obs.columns
-        self.list_of_features = self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'])
+        error = 'raise' if self.file_type == 'train' else 'ignore' #to ignore the drop of species_id
+        self.list_of_features = self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'], errors=error)
 
         
         features = self.data_set[self.list_of_features]
         # I don't know why, but bio_19 has some values that are not float Or NaN...
         features.bio_19 = pd.to_numeric(features['bio_19'], errors='coerce')
         
-        ### /!\ Carefull to not fill na with mean if we split data for test/train (its fine for the validation sso we still do it)
+        ### /!\ Carefull to not fill NA with mean if we split data for test/train (its fine for the validation so we still do it)
         features = features.fillna(features.mean())
+        # Adding epsilon let us not having 0 as min, and help the crossentropyloss not have log(0)
         epsilon = 1e-7
         self.normalized_features = (epsilon + features-features.min())/(features.max()-features.min())
 
@@ -81,7 +91,11 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         return len(self.data_set)
 
     def __getitem__(self, idx):
-        label = self.data_set.iloc[idx]["species_id"]
+        if self.file_type == "train":
+            label = self.data_set.iloc[idx]["species_id"]
+        else:
+            # We need the observation ids to make a submission
+            label = self.data_set.iloc[idx]["observation_id"]
         #Pillow works for png and tif
         image = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
 

@@ -4,8 +4,20 @@
 import torch
 import torch.nn as nn
 
+from . import utils
+
+class Top30Loss(nn.Module):
+    def __init__(self):
+        super(Top30Loss, self).__init__()
+
+    def forward(self, predicted, targets):
+        indexs = utils.get_top_30(predicted)
+        accuracy = [species in predicted[i] for i, species in enumerate(targets)]
+        return accuracy.count(True) / targets.size(0)
 
 def get_loss(lossname):
+    if lossname == "top30loss":
+        return Top30Loss()
     return eval(f"nn.{lossname}()")
 
 

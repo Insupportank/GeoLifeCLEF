@@ -150,7 +150,7 @@ def test(config):
 
     model_config = config["model"]
     model = models.build_model(config["model"], input_sizes, num_classes)
-    model.load_state_dict(model_config["path_to_test_model"])
+    model.load_state_dict(torch.load(model_config["path_to_test_model"]), strict=False)
     model.eval()
 
     top_30 = {"Id": [], "Predicted": []}

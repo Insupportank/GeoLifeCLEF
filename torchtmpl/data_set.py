@@ -56,23 +56,16 @@ class GeoLifeDataset(torch.utils.data.Dataset):
 
         #Add to the df the bioclimatic and pedologic data
         df_rasters = pd.read_csv(f"{file_path}/pre-extracted/environmental_vectors.csv", sep =";")
-        df_obs = df_obs.merge(df_rasters, left_on="observation_id", right_on="observation_id", suffixes=('', ''))
+        self.data_set = df_obs.merge(df_rasters, left_on="observation_id", right_on="observation_id", suffixes=('', '')).astype({'observation_id': 'int'})
+        self.data_set.observation_id = self.data_set.observation_id.astype(str)
 
         #Create column for the path of each images
-        if self.file_type == "train":
-            df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
-            df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
-            df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
-            df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
-        elif self.file_type == "test":
-            df_obs["rgb_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
-            df_obs["altitude_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
-            df_obs["landcover_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
-            df_obs["near_ir_image"] = df_obs.apply(lambda x: f"{self.file_path}/patches-sample/patches-{'fr' if str(x['observation_id'])[0] == '1' else 'us'}/00/{str(x['observation_id'])[-2:]}/{str(x['observation_id'])[-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
+        self.data_set["rgb_image"] = self.data_set.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == '1' else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_rgb.jpg", axis=1)
+        self.data_set["altitude_image"] = self.data_set.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == '1' else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_altitude.tif", axis=1)
+        self.data_set["landcover_image"] = self.data_set.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == '1' else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_landcover.jpg", axis=1)
+        self.data_set["near_ir_image"] = self.data_set.apply(lambda x: f"{self.file_path}/patches-{'fr' if x['observation_id'][0] == '1' else 'us'}/{x['observation_id'][-2:]}/{x['observation_id'][-4:-2]}/{x['observation_id']}_near_ir.jpg", axis=1)
 
-        self.data_set = df_obs
-
-        self.list_of_features = df_obs.columns
+        self.list_of_features = self.data_set.columns
         error = 'raise' if self.file_type == 'train' else 'ignore' #to ignore the drop of species_id
         self.list_of_features = self.list_of_features.drop(['species_id', 'observation_id', 'subset', 'rgb_image', 'altitude_image', 'landcover_image', 'near_ir_image'], errors=error)
 

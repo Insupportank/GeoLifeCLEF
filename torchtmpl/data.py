@@ -29,7 +29,7 @@ def get_dataloaders(data_config, use_cuda):
 
     logging.info("  - Dataset creation")
 
-    base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], data_portion=data_config["data_portion"])
+    base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], country=data_config["data_language"], data_portion=data_config["data_portion"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
     indices = list(range(len(base_dataset)))

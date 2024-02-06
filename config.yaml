@@ -20,7 +20,8 @@ logging:
   wandb: 
    project: deepl_geolifeclef
    entity: deelp_geolifeclef_aaron_julien_olivier
-  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
+  #logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  #For Aaron
+  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs" #For Julien
 # model:
 #   class: Linear
 model:

@@ -104,9 +104,17 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             transformed_landcover = self.transform(image=image_landcover)
             transformed_near_ir = self.transform(image=image_near_ir)
         else :
-            transformed = self.default_transform(image = np.asarray(image))
+            transformed_rgb = self.default_transform(image=image_rgb)
+            transformed_altitude = self.default_transform(image=image_altitude)
+            transformed_landcover = self.default_transform(image=image_landcover)
+            transformed_near_ir = self.default_transform(image=image_near_ir)
 
-        image = transformed['image'] #3,256,256 if RGB like it is now
+        image_rgb = transformed_rgb['image'] #3,256,256 if RGB like it is now
+        image_altitude = transformed_altitude['image']
+        image_landcover = transformed_landcover['image']
+        image_near_ir = transformed_near_ir['image']
+
+        image = torch.cat((image_rgb,image_altitude,image_landcover,image_near_ir))
         image = image.to(torch.float32)
 
         # #get features from df

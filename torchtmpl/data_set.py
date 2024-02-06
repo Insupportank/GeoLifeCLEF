@@ -112,7 +112,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             transformed_landcover = self.transform(image=image_landcover)
             transformed_near_ir = self.transform(image=image_near_ir)
         else :
-            transformed_rgb = self.default_transform(image=image_rgb)
+            transformed_rgb = self.default_transform_rgb(image=image_rgb)
             transformed_altitude = self.default_transform_non_rgb(image=image_altitude)
             transformed_landcover = self.default_transform_non_rgb(image=image_landcover)
             transformed_near_ir = self.default_transform_non_rgb(image=image_near_ir)

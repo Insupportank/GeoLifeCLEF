@@ -60,29 +60,21 @@ class CNN(nn.Module):
         return self.seq(x)
 
 class MyResNet(nn.Module):
-    def __init__(self, output_size):
+    def __init__(self, image_input_size,output_size):
         super(MyResNet, self).__init__()
         resnet18 = models.resnet18(pretrained=True)
         
         modules = list(resnet18.children())[:-2]
-        self.resnet18 = nn.Sequential(*modules)
-        
-        num_features = resnet18.fc.in_features
-        print(num_features)
-        self.custom_layers = nn.Sequential(
-            nn.Flatten(start_dim=1),
-            nn.Linear(num_features, 2*output_size),
-            nn.ReLU(),
-            nn.Linear(2*output_size, output_size)
-        )
+        resnet18_model = nn.Sequential(*modules)
+
+        probing_tensor = torch.zeros((1,) + image_input_size)
+        out_cnn = resnet18_model(probing_tensor)  # B, K, H, W
+        num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
+        out_layers = [nn.Flatten(start_dim=1), nn.Linear(num_features, output_size)]
+        self.seq = nn.Sequential(resnet18_model, *out_layers)
 
     def forward(self, x):
-        x = self.resnet18(x)
-        print("After ResNet:", x.shape)
-        x = x.view(x.size(0), -1)
-        print("After flattening:", x.shape)
-        x = self.custom_layers(x)
-        print("After custom layers:", x.shape)
+        return self.seq(x)
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
 # eval() and train() do work recurcively !! :)
 # gradient also does include child models. (except with .requires_grad=False)

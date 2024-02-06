@@ -5,6 +5,7 @@
 # External imports
 import torch
 import torch.nn as nn
+from torchvision import models
 from functools import reduce
 import operator
 
@@ -58,6 +59,26 @@ class CNN(nn.Module):
     def forward(self, x):
         return self.seq(x)
 
+class MyResNet(nn.Module):
+    def __init__(self, output_size):
+        super(MyResNet, self).__init__()
+        resnet18 = resnet18(pretrained=True)
+        
+        modules = list(resnet18.children())[:-2]
+        self.resnet18 = nn.Sequential(*modules)
+        
+        num_features = resnet18.fc.in_features
+        self.custom_layers = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(num_features, 2*output_size),
+            nn.ReLU(),
+            nn.Linear(2*output_size, output_size)
+        )
+
+    def forward(self, x):
+        x = self.resnet18(x)
+        x = self.custom_layers(x)
+        return x
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
 # eval() and train() do work recurcively !! :)
 # gradient also does include child models. (except with .requires_grad=False)

@@ -99,30 +99,17 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             label = self.data_set.iloc[idx]["observation_id"]
         #Pillow works for png and tif
         image_rgb = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
-        image_altitude = np.array(Image.open(self.data_set.iloc[idx]["altitude_image"]))
-        image_landcover = np.array(Image.open(self.data_set.iloc[idx]["altitude_image"]))         
-        image_near_ir = np.array(Image.open(self.data_set.iloc[idx]["altitude_image"]))
 
 
         
 
         if self.transform:
             transformed_rgb = self.transform(image=image_rgb)
-            transformed_altitude = self.transform(image=image_altitude)
-            transformed_landcover = self.transform(image=image_landcover)
-            transformed_near_ir = self.transform(image=image_near_ir)
         else :
             transformed_rgb = self.default_transform_rgb(image=image_rgb)
-            transformed_altitude = self.default_transform_non_rgb(image=image_altitude)
-            transformed_landcover = self.default_transform_non_rgb(image=image_landcover)
-            transformed_near_ir = self.default_transform_non_rgb(image=image_near_ir)
 
-        image_rgb = transformed_rgb['image'] #3,256,256 if RGB like it is now
-        image_altitude = transformed_altitude['image']
-        image_landcover = transformed_landcover['image']
-        image_near_ir = transformed_near_ir['image']
+        image = transformed_rgb['image'] #3,256,256 if RGB like it is now
 
-        image = torch.cat((image_rgb,image_altitude,image_landcover,image_near_ir))
         image = image.to(torch.float32)
 
         # #get features from df

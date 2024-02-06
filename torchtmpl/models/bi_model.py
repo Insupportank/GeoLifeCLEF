@@ -62,7 +62,7 @@ class CNN(nn.Module):
 class MyResNet(nn.Module):
     def __init__(self, output_size):
         super(MyResNet, self).__init__()
-        resnet18 = resnet18(pretrained=True)
+        resnet18 = models.resnet18(pretrained=True)
         
         modules = list(resnet18.children())[:-2]
         self.resnet18 = nn.Sequential(*modules)

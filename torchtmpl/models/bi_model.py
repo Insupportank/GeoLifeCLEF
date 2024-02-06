@@ -77,7 +77,7 @@ class MyResNet(nn.Module):
 
     def forward(self, x):
         x = self.resnet18(x)
-        x = self.custom_layers(x)
+        x = self.custom_layers(x.view(x.size(0), -1))
         return x
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
 # eval() and train() do work recurcively !! :)

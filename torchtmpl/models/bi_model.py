@@ -69,7 +69,7 @@ class MyResNet(nn.Module):
         
         num_features = resnet18.fc.in_features
         self.custom_layers = nn.Sequential(
-            nn.Flatten(),
+            nn.Flatten(start_dim=1),
             nn.Linear(num_features, 2*output_size),
             nn.ReLU(),
             nn.Linear(2*output_size, output_size)

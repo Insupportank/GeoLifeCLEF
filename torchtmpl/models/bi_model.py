@@ -77,8 +77,11 @@ class MyResNet(nn.Module):
 
     def forward(self, x):
         x = self.resnet18(x)
-        x = self.custom_layers(x.view(x.size(0), -1))
-        return x
+        print("After ResNet:", x.shape)
+        x = x.view(x.size(0), -1)
+        print("After flattening:", x.shape)
+        x = self.custom_layers(x)
+        print("After custom layers:", x.shape)
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
 # eval() and train() do work recurcively !! :)
 # gradient also does include child models. (except with .requires_grad=False)

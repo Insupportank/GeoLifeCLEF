@@ -137,3 +137,7 @@ def test(model, loader, f_loss, device):
         num_samples += outputs.shape[0]
 
     return total_loss / num_samples
+
+def get_top_30(output_batch):
+    values, indexs = torch.topk(output_batch, 30)
+    return indexs

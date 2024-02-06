@@ -1,6 +1,7 @@
 data:
   trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   data_portion: 1
+  data_language: 'all'
   #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
   batch_size: 16
@@ -17,7 +18,6 @@ loss: "CrossEntropyLoss"
 
 logging:
   wandb: 
-   key: 4da5ee7fd078d86b49fca0e87699da81983a7536
    project: deepl_geolifeclef
    entity: deelp_geolifeclef_aaron_julien_olivier
   logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
@@ -26,3 +26,4 @@ logging:
 model:
   class: BiModel
   num_layers : 4
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_5/best_model.pt"

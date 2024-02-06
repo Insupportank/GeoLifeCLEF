@@ -27,25 +27,16 @@ Then you can run a training, by editing the yaml file, then
 
 ```
 python -m torchtmpl.main config.yaml train
-```
-
-And for testing (**not yet implemented**)
-
-```
-python main.py path/to/your/run test
-```
-
-### Cluster experimentation (**not yet implemented**)
-
-For running the code on a cluster, we provide an example script for starting an experimentation on a SLURM based cluster.
-
-The script we provide is dedicated to a use on our clusters and you may need to adapt it to your setting. 
-
-Then running the simulation can be as simple as :
-
-```
-python3 submit.py
+or on slurm job:
 python3 submit-slurm.py config.yaml 1
+```
+
+And for testing (making sample submission)
+
+```
+python -m torchtmpl.main config.yaml test
+copy the file to local computor:
+scp -r sdi-labworks-2023-2024_XXX@chome.metz.supelec.fr:~/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/sample_submission_XXX.csv .
 ```
 
 ## Testing the functions

@@ -11,6 +11,8 @@ import yaml
 import wandb
 import torch
 import torchinfo.torchinfo as torchinfo
+import tqdm
+import pandas as pd
 
 # Local imports
 from . import data
@@ -26,7 +28,7 @@ def train(config):
 
     if "wandb" in config["logging"]:
         wandb_config = config["logging"]["wandb"]
-        wandb.login(key=wandb_config["key"]) # pour weight bias aaron team geolifeclef_aaron_julien_olivier
+        #wandb.login(key=wandb_config["key"]) # pour weight bias aaron team geolifeclef_aaron_julien_olivier
         wandb.init(project=wandb_config["project"], entity=wandb_config["entity"])
         wandb_log = wandb.log
         wandb_log(config)
@@ -131,7 +133,46 @@ def train(config):
 
 
 def test(config):
-    raise NotImplementedError
+    """
+    Load le model torch.load(model_testing)
+    Load le dataloader mais juste pour le testset -> recréer dataloader ou passer en arg que c'est le test.
+    model.eval()
+    model(donees)  = forward
+    
+    faire une fonction qui calcul le top 30 -> permet d'avoir une fct loss qu'on utilisera sur le validation set
+    sortir un fichier avec le top 30
+    """
+
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda") if use_cuda else torch.device("cpu")
+    
+    data_config = config["data"]
+    test_loader, input_sizes, num_classes = data.get_test_dataloader(data_config, use_cuda)
+
+    model_config = config["model"]
+    model = models.build_model(config["model"], input_sizes, num_classes)
+    model.load_state_dict(torch.load(model_config["path_to_test_model"]), strict=False)
+    model.eval()
+    model.to(device)
+
+    top_30 = {"Id": [], "Predicted": []}
+
+    for i, (inputs, observations) in (pbar := tqdm.tqdm(enumerate(test_loader))):
+
+        image_inputs, features_inputs = inputs["image"].to(device), inputs["features"].to(device)
+
+        # Compute the forward propagation
+        output_batch = model((image_inputs, features_inputs))
+        species_id = utils.get_top_30(output_batch)
+
+        top_30["Id"] += observations
+        top_30["Predicted"] += species_id.detach().cpu().numpy().tolist()
+    
+    top_30 = pd.DataFrame(top_30)
+    top_30["Predicted"] = top_30["Predicted"].apply(lambda x: " ".join(map(str, x)))
+    top_30.set_index('Id', inplace=True)
+    top_30.to_csv('sample_submission_testings.csv')
+    print("CSV done")
 
 
 if __name__ == "__main__":

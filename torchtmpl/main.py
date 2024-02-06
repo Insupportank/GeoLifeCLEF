@@ -11,6 +11,8 @@ import yaml
 import wandb
 import torch
 import torchinfo.torchinfo as torchinfo
+import tqdm
+import pandas as pd
 
 # Local imports
 from . import data
@@ -152,23 +154,26 @@ def test(config):
     model = models.build_model(config["model"], input_sizes, num_classes)
     model.load_state_dict(torch.load(model_config["path_to_test_model"]), strict=False)
     model.eval()
+    model.to(device)
 
     top_30 = {"Id": [], "Predicted": []}
 
-    for (inputs, observations) in test_loader:
+    for i, (inputs, observations) in (pbar := tqdm.tqdm(enumerate(test_loader))):
 
         image_inputs, features_inputs = inputs["image"].to(device), inputs["features"].to(device)
 
         # Compute the forward propagation
         output_batch = model((image_inputs, features_inputs))
-        species_id = get_top_30(output_batch)
+        species_id = utils.get_top_30(output_batch)
 
-        top_30["Id"] += observations.numpy().tolist()
-        top_30["Predicted"] += species_id.numpy().tolist()
+        top_30["Id"] += observations
+        top_30["Predicted"] += species_id.detach().cpu().numpy().tolist()
     
-    top_30["Predicted"].apply(lambda x: " ".join(map(str, x)))
-    top_30.set_index('Id')
+    top_30 = pd.DataFrame(top_30)
+    top_30["Predicted"] = top_30["Predicted"].apply(lambda x: " ".join(map(str, x)))
+    top_30.set_index('Id', inplace=True)
     top_30.to_csv('sample_submission_testings.csv')
+    print("CSV done")
 
 
 if __name__ == "__main__":

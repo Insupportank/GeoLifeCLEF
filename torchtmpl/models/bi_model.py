@@ -86,7 +86,7 @@ class BiModel(nn.Module):
         image_input_size, features_input_size = input_sizes
         cnn_output_size = num_classes // 8
         features_output_size = num_classes // 8
-        self.image_model = MyResNet(cnn_output_size)
+        self.image_model = MyResNet(image_input_size,cnn_output_size)
         self.features_model = FeaturesMLP(features_input_size, features_output_size)
         self.seq = nn.Sequential(
             nn.Linear(cnn_output_size + features_output_size, num_classes//2), # 1226x2455

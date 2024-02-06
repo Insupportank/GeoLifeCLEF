@@ -62,16 +62,16 @@ class CNN(nn.Module):
 class MyResNet(nn.Module):
     def __init__(self, image_input_size,output_size):
         super(MyResNet, self).__init__()
-        resnet18 = models.resnet18(pretrained=True)
+        resnet = models.resnet50(weights = "ResNet50_Weights.IMAGENET1K_V2")
         
-        modules = list(resnet18.children())[:-2]
-        resnet18_model = nn.Sequential(*modules)
+        modules = list(resnet.children())[:-2]
+        resnet_model = nn.Sequential(*modules)
 
         probing_tensor = torch.zeros((1,) + image_input_size)
-        out_cnn = resnet18_model(probing_tensor)  # B, K, H, W
+        out_cnn = resnet_model(probing_tensor)  # B, K, H, W
         num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
         out_layers = [nn.Flatten(start_dim=1), nn.Linear(num_features, output_size)]
-        self.seq = nn.Sequential(resnet18_model, *out_layers)
+        self.seq = nn.Sequential(resnet_model, *out_layers)
 
     def forward(self, x):
         return self.seq(x)

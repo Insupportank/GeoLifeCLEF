@@ -8,3 +8,5 @@ logslurms
 train
 logs
 torchtmpl/directory
+torchtmpl/__pycache__/
+torchtmpl/models/__pycache__/

@@ -13,7 +13,7 @@ optim:
   params:
     lr: 0.001
 
-nepochs: 10
+nepochs: 15
 loss: "CrossEntropyLoss"
 
 logging:

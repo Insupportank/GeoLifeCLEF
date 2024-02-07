@@ -114,7 +114,6 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         image_rgb = transformed_rgb['image'] #3,256,256 if RGB like it is now
         image_near_ir=transformed_near_ir["image"]
         image = torch.cat((image_near_ir,image_rgb[1:,:,:]))
-        print(image.size())
 
         image = image.to(torch.float32)
 

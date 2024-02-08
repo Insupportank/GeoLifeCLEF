@@ -51,9 +51,12 @@ def train(config):
     model.to(device)
 
     # Build the loss
-    logging.info("= Loss")
-    loss = optim.get_loss(config["loss"])
-    print(loss)
+    logging.info("= Training Loss")
+    training_loss = optim.get_loss(config["training_loss"])
+    print(training_loss)
+    logging.info("= Testing Loss")
+    testing_loss = optim.get_loss(config["testing_loss"])
+    print(testing_loss)
 
     # Build the optimizer
     logging.info("= Optimizer")
@@ -90,8 +93,10 @@ def train(config):
         + f"{torchinfo.summary(model.image_model, input_size=image_input_size)}\n\n"
         + "### Features model\n"
         + f"{torchinfo.summary(model.features_model, input_size=feature_input_size)}\n\n"
-        + "## Loss\n\n"
-        + f"{loss}\n\n"
+        + "## Training Loss\n\n"
+        + f"{training_loss}\n\n"
+        + "## Testing Loss\n\n"
+        + f"{testing_loss}\n\n"
         + "## Datasets : \n"
         + f"Train : {train_loader.dataset.dataset}\n"
         + f"Validation : {valid_loader.dataset.dataset}"
@@ -109,10 +114,10 @@ def train(config):
 
     for e in range(config["nepochs"]):
         # Train 1 epoch
-        train_loss = utils.train(model, train_loader, loss, optimizer, device)
+        train_loss = utils.train(model, train_loader, training_loss, optimizer, device)
 
         # Test
-        test_loss = utils.test(model, valid_loader, loss, device)
+        test_loss = utils.test(model, valid_loader, testing_loss, device)
 
         updated = model_checkpoint.update(test_loss)
         logging.info(

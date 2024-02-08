@@ -14,7 +14,8 @@ optim:
     lr: 0.005
 
 nepochs: 15
-loss: "CrossEntropyLoss"
+training_loss: "CrossEntropyLoss"
+testing_loss: "top30loss"
 
 logging:
   wandb: 

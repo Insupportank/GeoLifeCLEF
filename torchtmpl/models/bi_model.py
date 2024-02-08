@@ -109,7 +109,7 @@ class BiModel(nn.Module):
         cnn_output_size = num_classes // 8
         features_output_size = num_classes // 8
         image_models_dict = {"cnn":CNN,"resnet34":MyResNet34,"resnet18":MyResNet18}
-        image_model = image_models_dict[cfg["image_model"]["name"]]
+        image_model = image_models_dict[cfg["image_model"]["name"].lower()]
         self.image_model = image_model(cfg["image_model"],image_input_size,cnn_output_size)
         self.features_model = FeaturesMLP(cfg["features_model"],features_input_size, features_output_size)
         self.seq = nn.Sequential(

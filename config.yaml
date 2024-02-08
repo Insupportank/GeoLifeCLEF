@@ -4,14 +4,14 @@ data:
   data_language: 'all'
   #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
-  batch_size: 16
+  batch_size: 32
   num_workers: 4
   valid_ratio: 0.2
 
 optim:
   algo: SGD
   params:
-    lr: 0.001
+    lr: 0.005
 
 nepochs: 15
 loss: "CrossEntropyLoss"
@@ -27,8 +27,8 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet18
+    name: resnet34
     num_layers : 4 #Just for CNN
   features_model:
     num_intermediate_layers: 1
-  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_10/best_model.pt"
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_13/best_model.pt"

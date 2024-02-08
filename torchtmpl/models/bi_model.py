@@ -16,7 +16,7 @@ class FeaturesMLP(nn.Module):
         intermediate_layers = cfg["num_intermediate_layers"] *linear_relu(256,256)
         self.seq = nn.Sequential(
             nn.Linear(features_input_size, 256),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
             *intermediate_layers,
             nn.Linear(256, features_output_size)
             )
@@ -25,7 +25,7 @@ class FeaturesMLP(nn.Module):
         return self.seq(x)
 
 def linear_relu(cin,cout):
-    return [nn.Linear(cin,cout),nn.ReLU()]
+    return [nn.Linear(cin,cout),nn.ReLU(inplace=True)]
     
 class CNN(nn.Module):
     def __init__(self, cfg, image_input_size, output_size):

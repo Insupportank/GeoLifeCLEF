@@ -12,8 +12,8 @@ class Top30Loss(nn.Module):
 
     def forward(self, predicted, targets):
         indexs = utils.get_top_30(predicted)
-        accuracy = [species in predicted[i] for i, species in enumerate(targets)]
-        return accuracy.count(True) / targets.size(0)
+        accuracy = [species in indexs[i] for i, species in enumerate(targets)]
+        return accuracy.count(False) / targets.size(0)
 
 def get_loss(lossname):
     if lossname == "top30loss":

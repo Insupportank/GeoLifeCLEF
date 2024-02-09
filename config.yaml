@@ -5,7 +5,7 @@ data:
   #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
   batch_size: 64
-  num_workers: 4
+  num_workers: 8
   valid_ratio: 0.2
 
 optim:

@@ -9,9 +9,9 @@ data:
   valid_ratio: 0.2
 
 optim:
-  algo: SGD
+  algo: Adam
   params:
-    lr: 0.01
+    lr: 0.002
 
 nepochs: 15
 training_loss: "CrossEntropyLoss"
@@ -28,8 +28,8 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet34
+    name: resnet50
     num_layers : 4 #Just for CNN
   features_model:
     num_intermediate_layers: 1
-  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_13/best_model.pt"
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_21/best_model.pt"

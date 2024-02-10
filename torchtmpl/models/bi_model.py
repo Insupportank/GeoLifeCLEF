@@ -97,6 +97,23 @@ class MyResNet34(nn.Module):
 
     def forward(self, x):
         return self.seq(x)
+    
+class MyResNet50(nn.Module):
+    def __init__(self, cfg, image_input_size,output_size):
+        super(MyResNet34, self).__init__()
+        resnet = models.resnet50(weights = "IMAGENET1K_V2")
+        
+        modules = list(resnet.children())[:-2]
+        resnet_model = nn.Sequential(*modules)
+
+        probing_tensor = torch.zeros((1,) + image_input_size)
+        out_cnn = resnet_model(probing_tensor)  # B, K, H, W
+        num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
+        out_layers = [nn.Flatten(start_dim=1), nn.Linear(num_features, output_size)]
+        self.seq = nn.Sequential(resnet_model, *out_layers)
+
+    def forward(self, x):
+        return self.seq(x)
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
 # eval() and train() do work recurcively !! :)
 # gradient also does include child models. (except with .requires_grad=False)
@@ -108,7 +125,7 @@ class BiModel(nn.Module):
         image_input_size, features_input_size = input_sizes
         cnn_output_size = num_classes // 8
         features_output_size = num_classes // 8
-        image_models_dict = {"cnn":CNN,"resnet34":MyResNet34,"resnet18":MyResNet18}
+        image_models_dict = {"cnn":CNN,"resnet34":MyResNet34,"resnet18":MyResNet18,"resnet50":MyResNet50}
         image_model = image_models_dict[cfg["image_model"]["name"].lower()]
         self.image_model = image_model(cfg["image_model"],image_input_size,cnn_output_size)
         self.features_model = FeaturesMLP(cfg["features_model"],features_input_size, features_output_size)

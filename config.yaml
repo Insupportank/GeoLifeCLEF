@@ -6,7 +6,7 @@ data:
   # testpath: '/dummy/path/to/test'
   batch_size: 64
   num_workers: 8
-  valid_ratio: 0.3
+  valid_ratio: 0.27
 
 optim:
   algo: SGD

@@ -13,7 +13,7 @@ from torchvision import transforms
 
 import matplotlib.pyplot as plt
 
-import data_set
+from . import data_set
 
 def show_image(X):
     num_c = X.shape[0]
@@ -66,7 +66,7 @@ def get_dataloaders(data_config, use_cuda):
 
     train_dataset = torch.utils.data.Subset(base_dataset, train_indices)
     valid_dataset = torch.utils.data.Subset(base_dataset, valid_indices)
-    
+
     # Build the dataloaders
     train_loader = torch.utils.data.DataLoader(
         train_dataset,

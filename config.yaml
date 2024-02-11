@@ -4,26 +4,32 @@ data:
   data_language: 'all'
   #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
-  batch_size: 16
-  num_workers: 4
+  batch_size: 64
+  num_workers: 8
   valid_ratio: 0.2
 
 optim:
-  algo: SGD
+  algo: Adam
   params:
-    lr: 0.001
+    lr: 0.002
 
-nepochs: 10
-loss: "CrossEntropyLoss"
+nepochs: 15
+training_loss: "CrossEntropyLoss"
+testing_loss: "top30loss"
 
 logging:
   wandb: 
    project: deepl_geolifeclef
    entity: deelp_geolifeclef_aaron_julien_olivier
-  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  # Better to provide the fullpath, especially on the cluster
+  #logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs"  #For Aaron
+  logdir: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs" #For Julien
 # model:
 #   class: Linear
 model:
   class: BiModel
-  num_layers : 4
-  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_7/Documents/SDI/Deep_Learning/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_5/best_model.pt"
+  image_model:
+    name: resnet50
+    num_layers : 4 #Just for CNN
+  features_model:
+    num_intermediate_layers: 2
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_23/best_model.pt"

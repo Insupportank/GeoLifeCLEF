@@ -33,11 +33,19 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         self.file_path = file_path
         self.transform = transform
         self.file_type = file_type
-        self.default_transform = A.Compose([
+        self.default_transform_rgb = A.Compose([
             A.Resize(256,256),
             A.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]
+                ),
+            ToTensorV2()
+            ])
+        self.default_transform_non_rgb = A.Compose([
+            A.Resize(256,256),
+            A.Normalize(
+                mean=0.456,
+                std=0.22
                 ),
             ToTensorV2()
             ])
@@ -90,14 +98,23 @@ class GeoLifeDataset(torch.utils.data.Dataset):
             # We need the observation ids to make a submission
             label = self.data_set.iloc[idx]["observation_id"]
         #Pillow works for png and tif
-        image = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
+        image_rgb = np.array(Image.open(self.data_set.iloc[idx]["rgb_image"]).convert("RGB"))
+        image_near_ir = np.array(Image.open(self.data_set.iloc[idx]["near_ir_image"]))
+
+
+        
 
         if self.transform:
-            transformed = self.transform(image=np.asarray(image))
+            transformed_rgb = self.transform(image=image_rgb)
+            transformed_near_ir = self.transform(image=image_near_ir)
         else :
-            transformed = self.default_transform(image = np.asarray(image))
+            transformed_rgb = self.default_transform_rgb(image=image_rgb)
+            transformed_near_ir = self.default_transform_non_rgb(image=image_near_ir)
 
-        image = transformed['image'] #3,256,256 if RGB like it is now
+        image_rgb = transformed_rgb['image'] #3,256,256 if RGB like it is now
+        image_near_ir=transformed_near_ir["image"]
+        image = torch.cat((image_near_ir,image_rgb[1:,:,:]))
+
         image = image.to(torch.float32)
 
         # #get features from df

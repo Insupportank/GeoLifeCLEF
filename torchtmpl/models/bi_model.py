@@ -5,21 +5,27 @@
 # External imports
 import torch
 import torch.nn as nn
+from torchvision import models
 from functools import reduce
 import operator
 
 
 class FeaturesMLP(nn.Module):
-    def __init__(self, features_input_size, features_output_size):
+    def __init__(self, cfg, features_input_size, features_output_size):
         super().__init__()
+        intermediate_layers = cfg["num_intermediate_layers"] *linear_relu(256,256)
         self.seq = nn.Sequential(
             nn.Linear(features_input_size, 256),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
+            *intermediate_layers,
             nn.Linear(256, features_output_size)
             )
         
     def forward(self, x):
         return self.seq(x)
+
+def linear_relu(cin,cout):
+    return [nn.Linear(cin,cout),nn.ReLU(inplace=True)]
     
 class CNN(nn.Module):
     def __init__(self, cfg, image_input_size, output_size):
@@ -58,6 +64,56 @@ class CNN(nn.Module):
     def forward(self, x):
         return self.seq(x)
 
+class MyResNet18(nn.Module):
+    def __init__(self, cfg ,image_input_size, output_size):
+        super(MyResNet18, self).__init__()
+        resnet = models.resnet18(weights = "IMAGENET1K_V1")
+        
+        modules = list(resnet.children())[:-2]
+        resnet_model = nn.Sequential(*modules)
+
+        probing_tensor = torch.zeros((1,) + image_input_size)
+        out_cnn = resnet_model(probing_tensor)  # B, K, H, W
+        num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
+        out_layers = [nn.Flatten(start_dim=1), nn.Linear(num_features, output_size)]
+        self.seq = nn.Sequential(resnet_model, *out_layers)
+
+    def forward(self, x):
+        return self.seq(x)
+
+class MyResNet34(nn.Module):
+    def __init__(self, cfg, image_input_size,output_size):
+        super(MyResNet34, self).__init__()
+        resnet = models.resnet34(weights = "IMAGENET1K_V1")
+        
+        modules = list(resnet.children())[:-2]
+        resnet_model = nn.Sequential(*modules)
+
+        probing_tensor = torch.zeros((1,) + image_input_size)
+        out_cnn = resnet_model(probing_tensor)  # B, K, H, W
+        num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
+        out_layers = [nn.Flatten(start_dim=1), nn.Linear(num_features, output_size)]
+        self.seq = nn.Sequential(resnet_model, *out_layers)
+
+    def forward(self, x):
+        return self.seq(x)
+    
+class MyResNet50(nn.Module):
+    def __init__(self, cfg, image_input_size,output_size):
+        super(MyResNet50, self).__init__()
+        resnet = models.resnet50(weights = "IMAGENET1K_V2")
+        
+        modules = list(resnet.children())[:-2]
+        resnet_model = nn.Sequential(*modules)
+
+        probing_tensor = torch.zeros((1,) + image_input_size)
+        out_cnn = resnet_model(probing_tensor)  # B, K, H, W
+        num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
+        out_layers = [nn.Flatten(start_dim=1), nn.Linear(num_features, output_size)]
+        self.seq = nn.Sequential(resnet_model, *out_layers)
+
+    def forward(self, x):
+        return self.seq(x)
 # multiple models https://discuss.pytorch.org/t/combining-trained-models-in-pytorch/28383
 # eval() and train() do work recurcively !! :)
 # gradient also does include child models. (except with .requires_grad=False)
@@ -69,8 +125,10 @@ class BiModel(nn.Module):
         image_input_size, features_input_size = input_sizes
         cnn_output_size = num_classes // 8
         features_output_size = num_classes // 8
-        self.image_model = CNN(cfg, image_input_size, cnn_output_size)
-        self.features_model = FeaturesMLP(features_input_size, features_output_size)
+        image_models_dict = {"cnn":CNN,"resnet34":MyResNet34,"resnet18":MyResNet18,"resnet50":MyResNet50}
+        image_model = image_models_dict[cfg["image_model"]["name"].lower()]
+        self.image_model = image_model(cfg["image_model"],image_input_size,cnn_output_size)
+        self.features_model = FeaturesMLP(cfg["features_model"],features_input_size, features_output_size)
         self.seq = nn.Sequential(
             nn.Linear(cnn_output_size + features_output_size, num_classes//2), # 1226x2455
             nn.ReLU(),

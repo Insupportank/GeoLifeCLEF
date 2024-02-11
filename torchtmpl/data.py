@@ -13,7 +13,7 @@ from torchvision import transforms
 
 import matplotlib.pyplot as plt
 
-from . import data_set
+import data_set
 
 def show_image(X):
     num_c = X.shape[0]
@@ -32,11 +32,39 @@ def get_dataloaders(data_config, use_cuda):
     base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], country=data_config["data_language"], data_portion=data_config["data_portion"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
-    indices = list(range(len(base_dataset)))
-    random.shuffle(indices)
-    num_valid = int(valid_ratio * len(base_dataset))
-    train_indices = indices[num_valid:]
-    valid_indices = indices[:num_valid]
+
+    # # Before 
+    # indices = list(range(len(base_dataset)))
+    # random.shuffle(indices)
+    # num_valid = int(valid_ratio * len(base_dataset))
+    # train_indices = indices[num_valid:]
+    # valid_indices = indices[:num_valid]
+
+    # Let's try to get all features in train dataset.
+
+
+    train_indices = []
+    valid_indices = []
+    df = base_dataset.data_set.groupby('species_id')
+
+    for index, rows in df:
+        rows_shape = len(rows)
+        # Check if there are enough data to split them
+        if rows_shape < 1 / valid_ratio:
+            for index, row in rows.iterrows():
+                train_indices.append(index)
+
+        else: #
+            k = 0
+            for index, row in rows.iterrows():
+                k += 1
+                if int(rows_shape * valid_ratio) >= k:
+                    valid_indices.append(index)
+                else:
+                    train_indices.append(index)
+
+    print(f"Len valid : {len(valid_indices)}")
+    print(f"Len train : {len(train_indices)}")
 
     train_dataset = torch.utils.data.Subset(base_dataset, train_indices)
     valid_dataset = torch.utils.data.Subset(base_dataset, valid_indices)
@@ -90,3 +118,18 @@ def get_test_dataloader(data_config, use_cuda):
     input_sizes = (tuple(base_dataset[0][0]["image"].shape), tuple(base_dataset[0][0]["features"].shape)[0])
 
     return test_loader, input_sizes, num_classes
+
+import yaml, sys
+if __name__ == "__main__":
+    config = yaml.safe_load(open(sys.argv[1], "r"))
+
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda") if use_cuda else torch.device("cpu")
+    
+    # Build the dataloaders
+    logging.info("= Building the dataloaders")
+    data_config = config["data"]
+
+    train_loader, valid_loader, input_sizes, num_classes = get_dataloaders(
+        data_config, use_cuda
+    )

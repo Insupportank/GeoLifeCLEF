@@ -100,7 +100,7 @@ class MyResNet34(nn.Module):
     
 class MyResNet50(nn.Module):
     def __init__(self, cfg, image_input_size,output_size):
-        super(MyResNet34, self).__init__()
+        super(MyResNet50, self).__init__()
         resnet = models.resnet50(weights = "IMAGENET1K_V2")
         
         modules = list(resnet.children())[:-2]

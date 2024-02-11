@@ -63,12 +63,10 @@ def get_dataloaders(data_config, use_cuda):
                 else:
                     train_indices.append(index)
 
-    print(f"Len valid : {len(valid_indices)}")
-    print(f"Len train : {len(train_indices)}")
 
     train_dataset = torch.utils.data.Subset(base_dataset, train_indices)
     valid_dataset = torch.utils.data.Subset(base_dataset, valid_indices)
-
+    
     # Build the dataloaders
     train_loader = torch.utils.data.DataLoader(
         train_dataset,

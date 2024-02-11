@@ -6,12 +6,12 @@ data:
   # testpath: '/dummy/path/to/test'
   batch_size: 64
   num_workers: 8
-  valid_ratio: 0.2
+  valid_ratio: 0.3
 
 optim:
-  algo: Adam
+  algo: SGD
   params:
-    lr: 0.002
+    lr: 0.005
 
 nepochs: 15
 training_loss: "CrossEntropyLoss"
@@ -28,7 +28,7 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet50
+    name: resnet34
     num_layers : 4 #Just for CNN
   features_model:
     num_intermediate_layers: 2

@@ -28,8 +28,8 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet50
+    name: resnet34
     num_layers : 4 #Just for CNN
   features_model:
-    num_intermediate_layers: 1
-  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_21/best_model.pt"
+    num_intermediate_layers: 2
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_23/best_model.pt"

@@ -28,7 +28,7 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet34
+    name: resnet50
     num_layers : 4 #Just for CNN
   features_model:
     num_intermediate_layers: 2

@@ -1,11 +1,11 @@
 data:
-  trainpath: '$TMPDIR/mounts/Datasets4/GeoLifeCLEF2022'
+  trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   testpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   data_portion: 1
   data_language: 'all'
   batch_size: 64
   num_workers: 8
-  valid_ratio: 0.25
+  valid_ratio: 0.27
 
 optim:
   algo: SGD

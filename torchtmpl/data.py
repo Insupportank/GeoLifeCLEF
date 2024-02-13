@@ -98,7 +98,7 @@ def get_test_dataloader(data_config, use_cuda):
 
     logging.info("  - Dataset creation")
 
-    base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], file_type="test", country="all", transform=None, data_portion=1.)
+    base_dataset = data_set.GeoLifeDataset(data_config["testpath"], file_type="test", country="all", transform=None, data_portion=1.)
     logging.info(f"  - I loaded {len(base_dataset)} samples from test set")
 
     # Build the dataloader

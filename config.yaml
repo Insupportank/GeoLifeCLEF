@@ -4,9 +4,9 @@ data:
   data_language: 'all'
   #trainpath: '../../../Téléchargements/geolife_dataset'
   # testpath: '/dummy/path/to/test'
-  batch_size: 16
+  batch_size: 64
   num_workers: 8
-  valid_ratio: 0.27
+  valid_ratio: 0.25
 
 optim:
   algo: SGD

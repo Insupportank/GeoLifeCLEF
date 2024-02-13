@@ -3,6 +3,7 @@
 # Standard imports
 import logging
 import random
+import os
 
 # External imports
 import torch
@@ -29,7 +30,7 @@ def get_dataloaders(data_config, use_cuda):
 
     logging.info("  - Dataset creation")
 
-    base_dataset = data_set.GeoLifeDataset(data_config["trainpath"], country=data_config["data_language"], data_portion=data_config["data_portion"])
+    base_dataset = data_set.GeoLifeDataset(os.path.join(os.environ["TMPDIR"],data_config["trainpath"]), country=data_config["data_language"], data_portion=data_config["data_portion"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
 

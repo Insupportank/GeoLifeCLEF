@@ -25,7 +25,9 @@ echo "Session " ${{SLURM_ARRAY_JOB_ID}}_${{SLURM_ARRAY_TASK_ID}}
 echo "Running on " $(hostname)
 
 echo "Copying the source directory and data"
-date
+cp /data/GeoLifeCLEF2022.tar $TMPDIR
+cd $TMPDIR && tar -xvf GeoLifeCLEF2022.tar
+rm -f GeoLifeCLEF2022.tar
 mkdir $TMPDIR/code
 rsync -r --exclude logs --exclude logslurms --exclude configs . $TMPDIR/code
 

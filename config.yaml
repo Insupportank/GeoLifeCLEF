@@ -1,5 +1,5 @@
 data:
-  trainpath: '/mounts/Datasets4/GeoLifeCLEF2022'
+  trainpath: '$TMPDIR/GeoLifeCLEF2022'
   data_portion: 1
   data_language: 'all'
   #trainpath: '../../../Téléchargements/geolife_dataset'

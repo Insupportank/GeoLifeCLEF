@@ -31,7 +31,6 @@ rsync -r --exclude logs --exclude logslurms --exclude configs . $TMPDIR/code
 cp /data/GeoLifeCLEF2022.tar $TMPDIR
 cd $TMPDIR && tar -xvf GeoLifeCLEF2022.tar
 rm -f GeoLifeCLEF2022.tar
-ls
 
 echo "Checking out the correct version of the code commit_id {commit_id}"
 cd $TMPDIR/code

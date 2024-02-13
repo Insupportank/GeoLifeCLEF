@@ -10,7 +10,7 @@ data:
 optim:
   algo: SGD
   params:
-    lr: 0.01
+    lr: 0.001
 
 nepochs: 15
 training_loss: "CrossEntropyLoss"
@@ -27,7 +27,7 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet34
+    name: resnet50
     num_layers : 4 #Just for CNN
     dropout : 0.2
   features_model:

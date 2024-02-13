@@ -66,12 +66,35 @@ class CNN(nn.Module):
 
 class MyResNet18(nn.Module):
     def __init__(self, cfg ,image_input_size, output_size):
+        #Get ResNet18 with the pretrained weigths
         super(MyResNet18, self).__init__()
         resnet = models.resnet18(weights = "IMAGENET1K_V1")
         
+        if cfg["dropout"]>0:
+            p = cfg["dropout"]
+            feats_list = []
+            for key, value in resnet.named_children():
+                #Add a droupout layer to all conv layers
+                if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
+                    feats_list.append(nn.Conv2d(
+                        in_channels=value.in_channels,
+                        out_channels=value.out_channels,
+                        kernel_size=value.kernel_size,
+                        stride=value.stride,
+                        padding=value.padding,
+                        bias=value.bias,
+                    ))
+                    feats_list.append(nn.Dropout(p=p, inplace=True))
+                else:
+                    feats_list.append(value)
+
+                # Create a new model with the modified layers
+            resnet = nn.Sequential(*feats_list)
+        #Put all the layers in the model except the final ones
         modules = list(resnet.children())[:-2]
         resnet_model = nn.Sequential(*modules)
 
+        #Connect the Resnet layers with a sequential layer to gather all in one model
         probing_tensor = torch.zeros((1,) + image_input_size)
         out_cnn = resnet_model(probing_tensor)  # B, K, H, W
         num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
@@ -82,13 +105,36 @@ class MyResNet18(nn.Module):
         return self.seq(x)
 
 class MyResNet34(nn.Module):
-    def __init__(self, cfg, image_input_size,output_size):
+    def __init__(self, cfg ,image_input_size, output_size):
+        #Get ResNet34 with the pretrained weigths
         super(MyResNet34, self).__init__()
         resnet = models.resnet34(weights = "IMAGENET1K_V1")
-        
+
+        if cfg["dropout"]>0:
+            p = cfg["dropout"]
+            feats_list = []
+            for key, value in resnet.named_children():
+                #Add a droupout layer to every conv layers
+                if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
+                    feats_list.append(nn.Conv2d(
+                        in_channels=value.in_channels,
+                        out_channels=value.out_channels,
+                        kernel_size=value.kernel_size,
+                        stride=value.stride,
+                        padding=value.padding,
+                        bias=value.bias,
+                    ))
+                    feats_list.append(nn.Dropout(p=p, inplace=True))
+                else:
+                    feats_list.append(value)
+
+                # Create a new model with the modified layers
+            resnet = nn.Sequential(*feats_list)
+        #Put all the layers in the model except the final ones
         modules = list(resnet.children())[:-2]
         resnet_model = nn.Sequential(*modules)
 
+        #Connect the Resnet layers with a sequential layer to gather all in one model
         probing_tensor = torch.zeros((1,) + image_input_size)
         out_cnn = resnet_model(probing_tensor)  # B, K, H, W
         num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
@@ -97,15 +143,38 @@ class MyResNet34(nn.Module):
 
     def forward(self, x):
         return self.seq(x)
-    
+
 class MyResNet50(nn.Module):
-    def __init__(self, cfg, image_input_size,output_size):
+    def __init__(self, cfg ,image_input_size, output_size):
+        #Get ResNet34 with the pretrained weigths
         super(MyResNet50, self).__init__()
         resnet = models.resnet50(weights = "IMAGENET1K_V2")
-        
+
+        if cfg["dropout"]>0:
+            p = cfg["dropout"]
+            feats_list = []
+            #Add a droupout layer to every conv layers
+            for key, value in resnet.named_children():  
+                if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
+                    feats_list.append(nn.Conv2d(
+                        in_channels=value.in_channels,
+                        out_channels=value.out_channels,
+                        kernel_size=value.kernel_size,
+                        stride=value.stride,
+                        padding=value.padding,
+                        bias=value.bias,
+                    ))
+                    feats_list.append(nn.Dropout(p=p, inplace=True))
+                else:
+                    feats_list.append(value)
+
+                # Create a new model with the modified layers
+            resnet = nn.Sequential(*feats_list)
+        #Put all the layers in the model except the final ones
         modules = list(resnet.children())[:-2]
         resnet_model = nn.Sequential(*modules)
 
+        #Connect the Resnet layers with a sequential layer to gather all in one model
         probing_tensor = torch.zeros((1,) + image_input_size)
         out_cnn = resnet_model(probing_tensor)  # B, K, H, W
         num_features = reduce(operator.mul, out_cnn.shape[1:], 1)
@@ -125,6 +194,7 @@ class BiModel(nn.Module):
         image_input_size, features_input_size = input_sizes
         cnn_output_size = num_classes // 8
         features_output_size = num_classes // 8
+        #Dictionnary of all images models
         image_models_dict = {"cnn":CNN,"resnet34":MyResNet34,"resnet18":MyResNet18,"resnet50":MyResNet50}
         image_model = image_models_dict[cfg["image_model"]["name"].lower()]
         self.image_model = image_model(cfg["image_model"],image_input_size,cnn_output_size)

@@ -29,8 +29,8 @@ def get_dataloaders(data_config, use_cuda):
     num_workers = data_config["num_workers"]
 
     logging.info("  - Dataset creation")
-
-    base_dataset = data_set.GeoLifeDataset(os.path.join(os.environ["TMPDIR"],data_config["trainpath"]), country=data_config["data_language"], data_portion=data_config["data_portion"])
+    print(os.path.join("..",data_config["trainpath"]))
+    base_dataset = data_set.GeoLifeDataset(os.path.join("..",data_config["trainpath"]), country=data_config["data_language"], data_portion=data_config["data_portion"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
 

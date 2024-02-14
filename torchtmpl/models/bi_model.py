@@ -70,11 +70,12 @@ class MyResNet18(nn.Module):
         super(MyResNet18, self).__init__()
         resnet = models.resnet18(weights = "IMAGENET1K_V1")
         
+        #Adding droput if specified in the config
         if cfg["dropout"]>0:
             p = cfg["dropout"]
             feats_list = []
             for key, value in resnet.named_children():
-                #Add a droupout layer to all conv layers
+                #Add a droupout layer to every conv layer
                 if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
                     feats_list.append(nn.Conv2d(
                         in_channels=value.in_channels,
@@ -114,7 +115,7 @@ class MyResNet34(nn.Module):
             p = cfg["dropout"]
             feats_list = []
             for key, value in resnet.named_children():
-                #Add a droupout layer to every conv layers
+                #Add a droupout layer to every conv layer
                 if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
                     feats_list.append(nn.Conv2d(
                         in_channels=value.in_channels,
@@ -153,7 +154,7 @@ class MyResNet50(nn.Module):
         if cfg["dropout"]>0:
             p = cfg["dropout"]
             feats_list = []
-            #Add a droupout layer to every conv layers
+            #Add a droupout layer to every conv layer
             for key, value in resnet.named_children():  
                 if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
                     feats_list.append(nn.Conv2d(

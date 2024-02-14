@@ -30,6 +30,7 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         - 8 Pedologic data features (in the pre-extracted/environmental_vectors.csv)
     """
     def __init__(self, file_path, file_type="train", country="all", transform=None, data_portion=.2):
+        print(f"File path : {file_path}")
         self.file_path = file_path
         self.transform = transform
         self.file_type = file_type
@@ -49,7 +50,8 @@ class GeoLifeDataset(torch.utils.data.Dataset):
                 ),
             ToTensorV2()
             ])
-      
+
+        print(f"{file_path}/observations/observations_fr_{file_type}.csv")
         if country == "all":
             df_obs_fr = pd.read_csv(f"{file_path}/observations/observations_fr_{file_type}.csv", sep=";")
             df_obs_us = pd.read_csv(f"{file_path}/observations/observations_us_{file_type}.csv", sep=";")

@@ -119,8 +119,8 @@ def get_test_dataloader(data_config, use_cuda):
 
     return test_loader, input_sizes, num_classes
 
-import yaml, sys
 if __name__ == "__main__":
+    import yaml, sys
     config = yaml.safe_load(open(sys.argv[1], "r"))
 
     use_cuda = torch.cuda.is_available()

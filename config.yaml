@@ -3,7 +3,7 @@ data:
   testpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   data_portion: 1
   data_language: 'all'
-  batch_size: 32
+  batch_size: 64
   num_workers: 8
   valid_ratio: 0.25
 
@@ -27,7 +27,7 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet50
+    name: resnet34
     num_layers : 4 #Just for CNN
     dropout : 0.2
   features_model:

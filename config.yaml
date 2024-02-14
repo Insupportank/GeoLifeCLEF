@@ -6,7 +6,7 @@ data:
   batch_size: 64
   num_workers: 8
   split: random
-  valid_ratio: 0.25
+  valid_ratio: 0.2
 
 optim:
   algo: SGD
@@ -28,7 +28,7 @@ logging:
 model:
   class: BiModel
   image_model:
-    name: resnet34
+    name: resnet50
     num_layers : 4 #Just for CNN
     dropout : 0.2
   features_model:

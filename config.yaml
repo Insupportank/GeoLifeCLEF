@@ -5,7 +5,7 @@ data:
   data_language: 'all'
   batch_size: 32
   num_workers: 8
-  split: custom
+  split: random
   valid_ratio: 0.2
 
 optim:

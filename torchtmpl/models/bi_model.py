@@ -13,18 +13,30 @@ import operator
 class FeaturesMLP(nn.Module):
     def __init__(self, cfg, features_input_size, features_output_size):
         super().__init__()
-        intermediate_layers = cfg["num_intermediate_layers"] *linear_relu(256,256)
-        self.seq = nn.Sequential(
-            nn.Linear(features_input_size, 256),
-            nn.ReLU(inplace=True),
-            *intermediate_layers,
-            nn.Linear(256, features_output_size)
-            )
+        p_dropout = cfg["dropout"]
+        intermediate_layers = cfg["num_intermediate_layers"] *linear_relu(256,256,p_dropout)
+        if p_dropout == 0:
+            self.seq = nn.Sequential(
+                nn.Linear(features_input_size, 256),
+                nn.Dropout(p_dropout,inplace=True),
+                nn.ReLU(inplace=True),
+                *intermediate_layers,
+                nn.Linear(256, features_output_size)
+                )
+        else:
+            self.seq = nn.Sequential(
+                nn.Linear(features_input_size, 256),
+                nn.ReLU(inplace=True),
+                *intermediate_layers,
+                nn.Linear(256, features_output_size)
+                )            
         
     def forward(self, x):
         return self.seq(x)
 
-def linear_relu(cin,cout):
+def linear_relu(cin,cout,p_dropout):
+    if p_dropout>0:
+        return [nn.Linear(cin,cout),nn.Dropout(p_dropout,inplace=True),nn.ReLU(inplace=True)]
     return [nn.Linear(cin,cout),nn.ReLU(inplace=True)]
     
 class CNN(nn.Module):

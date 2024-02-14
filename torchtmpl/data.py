@@ -34,35 +34,36 @@ def get_dataloaders(data_config, use_cuda):
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
 
-    # # Before 
-    indices = list(range(len(base_dataset)))
-    random.shuffle(indices)
-    num_valid = int(valid_ratio * len(base_dataset))
-    train_indices = indices[num_valid:]
-    valid_indices = indices[:num_valid]
+    # # Before
+    if data_config["split"] == "random":
+        indices = list(range(len(base_dataset)))
+        random.shuffle(indices)
+        num_valid = int(valid_ratio * len(base_dataset))
+        train_indices = indices[num_valid:]
+        valid_indices = indices[:num_valid]
 
     # Let's try to get all features in train dataset.
 
+    elif data_config["split"] == "custom":
+        train_indices = []
+        valid_indices = []
+        df = base_dataset.data_set.groupby('species_id')
 
-    # train_indices = []
-    # valid_indices = []
-    # df = base_dataset.data_set.groupby('species_id')
+        for index, rows in df:
+            rows_shape = len(rows)
+            # Check if there are enough data to split them
+            if rows_shape < 1 / valid_ratio:
+                for index, row in rows.iterrows():
+                    train_indices.append(index)
 
-    # for index, rows in df:
-    #     rows_shape = len(rows)
-    #     # Check if there are enough data to split them
-    #     if rows_shape < 1 / valid_ratio:
-    #         for index, row in rows.iterrows():
-    #             train_indices.append(index)
-
-    #     else: #
-    #         k = 0
-    #         for index, row in rows.iterrows():
-    #             k += 1
-    #             if int(rows_shape * valid_ratio) >= k:
-    #                 valid_indices.append(index)
-    #             else:
-    #                 train_indices.append(index)
+            else: #
+                k = 0
+                for index, row in rows.iterrows():
+                    k += 1
+                    if int(rows_shape * valid_ratio) >= k:
+                        valid_indices.append(index)
+                    else:
+                        train_indices.append(index)
 
 
     train_dataset = torch.utils.data.Subset(base_dataset, train_indices)

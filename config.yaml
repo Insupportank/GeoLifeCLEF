@@ -5,6 +5,7 @@ data:
   data_language: 'all'
   batch_size: 64
   num_workers: 8
+  split: random
   valid_ratio: 0.25
 
 optim:

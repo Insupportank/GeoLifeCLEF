@@ -53,10 +53,8 @@ def train(config):
     # Build the loss
     logging.info("= Training Loss")
     training_loss = optim.get_loss(config["training_loss"])
-    print(training_loss)
     logging.info("= Testing Loss")
     testing_loss = optim.get_loss(config["testing_loss"])
-    print(testing_loss)
 
     # Build the optimizer
     logging.info("= Optimizer")
@@ -69,7 +67,6 @@ def train(config):
     logname = model_config["class"]
     logdir = utils.generate_unique_logpath(logging_config["logdir"], logname)
     if not os.path.isdir(logdir):
-        print(logdir)
         os.makedirs(logdir)
     logging.info(f"Will be logging into {logdir}")
 

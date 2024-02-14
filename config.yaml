@@ -3,9 +3,9 @@ data:
   testpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   data_portion: 1
   data_language: 'all'
-  batch_size: 64
+  batch_size: 32
   num_workers: 8
-  split: random
+  split: custom
   valid_ratio: 0.2
 
 optim:

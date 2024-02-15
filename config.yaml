@@ -6,7 +6,7 @@ data:
   batch_size: 32
   num_workers: 8
   split: random
-  valid_ratio: 0.2
+  valid_ratio: 0.15
 
 optim:
   algo: SGD
@@ -32,6 +32,6 @@ model:
     num_layers : 4 #Just for CNN
     dropout : 0
   features_model:
-    num_intermediate_layers: 2
-    dropout : 0.3
-  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_37/best_model.pt"
+    num_intermediate_layers: 3
+    dropout : 0.5
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_44/best_model.pt"

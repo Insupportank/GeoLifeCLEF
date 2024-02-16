@@ -25,7 +25,7 @@ class FeaturesMLP(nn.Module):
         return self.seq(x)
 
 def linear_relu(cin,cout):
-    return [nn.Linear(cin,cout),nn.ReLU(inplace=True)]
+    return [nn.Linear(cin,cout), nn.Dropout(0.2), nn.ReLU(inplace=True)]
     
 class CNN(nn.Module):
     def __init__(self, cfg, image_input_size, output_size):
@@ -33,12 +33,14 @@ class CNN(nn.Module):
         def conv_relu_bn(cin, cout):
             return [
                 nn.Conv2d(cin, cout, kernel_size=3, stride=1, padding=1),
+                nn.Dropout(0.2),
                 nn.ReLU(),
                 nn.BatchNorm2d(cout),
             ]
         def conv_down(cin, cout):
             return [
                 nn.Conv2d(cin, cout, kernel_size=2, stride=2, padding=0),
+                nn.Dropout(0.2),
                 nn.ReLU(),
                 nn.BatchNorm2d(cout),
             ]
@@ -201,6 +203,7 @@ class BiModel(nn.Module):
         self.features_model = FeaturesMLP(cfg["features_model"],features_input_size, features_output_size)
         self.seq = nn.Sequential(
             nn.Linear(cnn_output_size + features_output_size, num_classes//2), # 1226x2455
+            nn.Dropout(0.2),
             nn.ReLU(),
             nn.Linear(num_classes//2, num_classes)
             )

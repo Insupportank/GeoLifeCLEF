@@ -1,3 +1,6 @@
+# Video link
+https://www.youtube.com/watch?v=9CTslkW2xLs
+
 # Template base code for pytorch
 
 This repository contains a template base code for a complete pytorch pipeline.

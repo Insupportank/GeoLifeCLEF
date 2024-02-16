@@ -34,6 +34,14 @@ class GeoLifeDataset(torch.utils.data.Dataset):
         self.transform = transform
         self.file_type = file_type
         self.default_transform_rgb = A.Compose([
+            A.RandomRotate90(.5),
+            A.Flip(.5)
+            A.RandomBrightnessContrast(),
+            A.OneOf([
+                MotionBlur(p=0.2),
+                MedianBlur(blur_limit=3, p=0.1),
+                Blur(blur_limit=3, p=0.1),
+            ], p=0.2)
             A.Resize(256,256),
             A.Normalize(
                 mean=[0.485, 0.456, 0.406],

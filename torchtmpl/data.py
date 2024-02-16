@@ -29,8 +29,7 @@ def get_dataloaders(data_config, use_cuda):
     num_workers = data_config["num_workers"]
 
     logging.info("  - Dataset creation")
-
-    base_dataset = data_set.GeoLifeDataset(os.path.join(os.environ["TMPDIR"],data_config["trainpath"]), country=data_config["data_language"], data_portion=data_config["data_portion"])
+    base_dataset = data_set.GeoLifeDataset(".." + data_config["trainpath"], country=data_config["data_language"], data_portion=data_config["data_portion"])
     logging.info(f"  - I loaded {len(base_dataset)} samples")
 
 
@@ -119,8 +118,8 @@ def get_test_dataloader(data_config, use_cuda):
 
     return test_loader, input_sizes, num_classes
 
-import yaml, sys
 if __name__ == "__main__":
+    import yaml, sys
     config = yaml.safe_load(open(sys.argv[1], "r"))
 
     use_cuda = torch.cuda.is_available()

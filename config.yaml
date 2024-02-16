@@ -3,15 +3,15 @@ data:
   testpath: '/mounts/Datasets4/GeoLifeCLEF2022'
   data_portion: 1
   data_language: 'all'
-  batch_size: 64
+  batch_size: 32
   num_workers: 8
-  split: random
-  valid_ratio: 0.25
+  split: custom
+  valid_ratio: 0.15
 
 optim:
   algo: SGD
   params:
-    lr: 0.001
+    lr: 0.005
 
 nepochs: 15
 training_loss: "CrossEntropyLoss"
@@ -30,7 +30,8 @@ model:
   image_model:
     name: resnet34
     num_layers : 4 #Just for CNN
-    dropout : 0.2
+    dropout : 0
   features_model:
-    num_intermediate_layers: 2
-  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_27/best_model.pt"
+    num_intermediate_layers: 3
+    dropout : 0.5
+  path_to_test_model : "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_29/deep_learning_geolifeclef_aaron_julien_olivier_2024/logs/BiModel_45/best_model.pt"

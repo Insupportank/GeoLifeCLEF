@@ -13,19 +13,31 @@ import operator
 class FeaturesMLP(nn.Module):
     def __init__(self, cfg, features_input_size, features_output_size):
         super().__init__()
-        intermediate_layers = cfg["num_intermediate_layers"] *linear_relu(256,256)
-        self.seq = nn.Sequential(
-            nn.Linear(features_input_size, 256),
-            nn.ReLU(inplace=True),
-            *intermediate_layers,
-            nn.Linear(256, features_output_size)
-            )
+        p_dropout = cfg["dropout"]
+        intermediate_layers = cfg["num_intermediate_layers"] *linear_relu(256,256,p_dropout)
+        if p_dropout == 0:
+            self.seq = nn.Sequential(
+                nn.Linear(features_input_size, 256),
+                nn.Dropout(p_dropout,inplace=True),
+                nn.ReLU(inplace=True),
+                *intermediate_layers,
+                nn.Linear(256, features_output_size)
+                )
+        else:
+            self.seq = nn.Sequential(
+                nn.Linear(features_input_size, 256),
+                nn.ReLU(inplace=True),
+                *intermediate_layers,
+                nn.Linear(256, features_output_size)
+                )            
         
     def forward(self, x):
         return self.seq(x)
 
-def linear_relu(cin,cout):
-    return [nn.Linear(cin,cout), nn.Dropout(0.2), nn.ReLU(inplace=True)]
+def linear_relu(cin,cout,p_dropout):
+    if p_dropout>0:
+        return [nn.Linear(cin,cout),nn.Dropout(p_dropout,inplace=True),nn.ReLU(inplace=True)]
+    return [nn.Linear(cin,cout),nn.ReLU(inplace=True)]
     
 class CNN(nn.Module):
     def __init__(self, cfg, image_input_size, output_size):
@@ -72,11 +84,12 @@ class MyResNet18(nn.Module):
         super(MyResNet18, self).__init__()
         resnet = models.resnet18(weights = "IMAGENET1K_V1")
         
+        #Adding droput if specified in the config
         if cfg["dropout"]>0:
             p = cfg["dropout"]
             feats_list = []
             for key, value in resnet.named_children():
-                #Add a droupout layer to all conv layers
+                #Add a droupout layer to every conv layer
                 if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
                     feats_list.append(nn.Conv2d(
                         in_channels=value.in_channels,
@@ -116,7 +129,7 @@ class MyResNet34(nn.Module):
             p = cfg["dropout"]
             feats_list = []
             for key, value in resnet.named_children():
-                #Add a droupout layer to every conv layers
+                #Add a droupout layer to every conv layer
                 if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
                     feats_list.append(nn.Conv2d(
                         in_channels=value.in_channels,
@@ -155,7 +168,7 @@ class MyResNet50(nn.Module):
         if cfg["dropout"]>0:
             p = cfg["dropout"]
             feats_list = []
-            #Add a droupout layer to every conv layers
+            #Add a droupout layer to every conv layer
             for key, value in resnet.named_children():  
                 if isinstance(value, nn.Conv2d) or isinstance(value, nn.Conv1d):
                     feats_list.append(nn.Conv2d(

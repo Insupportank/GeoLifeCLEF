@@ -16,7 +16,7 @@ def makejob(commit_id, configpath, nruns):
 #SBATCH --output=logslurms/slurm-%A_%a.out
 #SBATCH --error=logslurms/slurm-%A_%a.err
 #SBATCH --array=1-{nruns}
-
+#SBATCH --exclusive
 current_dir=`pwd`
 export PATH=$PATH:~/.local/bin
 
@@ -29,7 +29,7 @@ mkdir $TMPDIR/code
 rsync -r --exclude logs --exclude logslurms --exclude configs . $TMPDIR/code
 
 cp /data/GeoLifeCLEF2022.tar $TMPDIR
-cd $TMPDIR && tar -xvf GeoLifeCLEF2022.tar
+cd $TMPDIR && tar -xf GeoLifeCLEF2022.tar
 rm -f GeoLifeCLEF2022.tar
 
 echo "Checking out the correct version of the code commit_id {commit_id}"
